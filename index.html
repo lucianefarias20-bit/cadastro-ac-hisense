@@ -1,0 +1,1796 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<title>Cadastro AC Hisense</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: barra fixa com escolha de cliente e produto; painel de trabalho com resumo, alertas, ações e a tabela de campos por unidade */
+:root{
+  --bg:#f3f6f6; --panel:#ffffff; --ink:#0f2526; --muted:#5b6f70; --line:#d6e0e0; --soft:#e9f0f0;
+  --accent:#00807b; --accent-ink:#ffffff; --accent-soft:#d8efed; --green:#0a8a45;
+  --err:#b42318; --err-soft:#fde7e5; --warn:#9a6200; --warn-soft:#fff3d6; --ok:#1d7a3e; --ok-soft:#ddf3e4;
+  --f-display:"Archivo","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1617; --panel:#132122; --ink:#e3eeee; --muted:#93a8a9; --line:#26393a; --soft:#1a2c2d;
+  --accent:#3cc4bd; --accent-ink:#06201f; --accent-soft:#163a39; --green:#5cd393;
+  --err:#ff8a80; --err-soft:#3a1715; --warn:#f2c14e; --warn-soft:#352a10; --ok:#6fd39a; --ok-soft:#14301f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1617; --panel:#132122; --ink:#e3eeee; --muted:#93a8a9; --line:#26393a; --soft:#1a2c2d;
+  --accent:#3cc4bd; --accent-ink:#06201f; --accent-soft:#163a39; --green:#5cd393;
+  --err:#ff8a80; --err-soft:#3a1715; --warn:#f2c14e; --warn-soft:#352a10; --ok:#6fd39a; --ok-soft:#14301f; color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:flex;flex-direction:column;gap:18px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--f-display);font-size:1.6rem;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0}
+.basebadge{font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+nav.tabs button{font:600 14px var(--f-body);background:none;border:0;color:var(--muted);padding:10px 14px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.side{display:flex;flex-direction:column;gap:14px;position:sticky;top:12px}
+@media (max-width:860px){.side{position:static}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.label{font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:7px;padding:7px 11px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg button:disabled{opacity:.5;cursor:not-allowed}
+input[type=search],input[type=text]{width:100%;font:14px var(--f-body);padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.list{max-height:56vh;overflow:auto;margin-top:10px;display:flex;flex-direction:column;gap:2px}
+.grp{font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:10px 6px 4px}
+.row{display:flex;align-items:flex-start;gap:6px;padding-left:4px}
+.row input,.grp input{margin-top:9px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.grp{display:flex;gap:8px;align-items:center;cursor:pointer;font:700 15px var(--f-display);text-transform:none;letter-spacing:0;color:var(--green);padding:10px 6px 4px}
+.grp .cnt{font:500 12px var(--f-body);color:var(--muted)}
+.grp.noline,.lineeyebrow.noline{color:var(--muted);font-style:italic}
+.cat{font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:16px 6px 0;border-top:1px solid var(--line);margin-top:6px}
+.cat:first-child{border-top:0;margin-top:0;padding-top:4px}
+.lineeyebrow{font:700 1.05rem var(--f-display);color:var(--green);margin:0 0 2px}
+.grp input{margin-top:0}
+.row .item{flex:1;min-width:0}
+.selinfo{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--muted)}
+.link{background:none;border:0;color:var(--accent);font:600 12px var(--f-body);cursor:pointer;padding:0}
+.selbar{background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
+.selbar.muted{background:var(--panel);border-color:var(--line);color:var(--muted);display:block;font-size:13px}
+@media (max-width:560px){.selbar{grid-template-columns:minmax(0,1fr)}}
+.selk{cursor:pointer;color:var(--ink);display:inline-flex;gap:6px;align-items:center}
+.selk[aria-current="true"]{border-color:var(--accent)}
+.selk .x{color:var(--muted);font-size:14px;line-height:1;padding:0 2px}
+.selk .x:hover{color:var(--err)}
+.item{text-align:left;border:0;background:none;color:var(--ink);padding:7px 8px;border-radius:6px;cursor:pointer;display:flex;flex-direction:column;gap:1px;font:13px var(--f-body)}
+.item:hover{background:var(--soft)}
+.item[aria-current="true"]{background:var(--accent-soft)}
+.item .m{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:start}
+@media (max-width:560px){.summary{grid-template-columns:minmax(0,1fr)}}
+.kitname{font-family:var(--f-display);font-size:1.3rem;margin:0 0 6px;text-wrap:balance}
+.units{display:flex;flex-wrap:wrap;gap:8px}
+.unit{font:12px var(--f-mono);background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+.unit b{font-family:var(--f-body);font-weight:600;margin-right:6px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12px;border-radius:999px;padding:3px 10px;background:var(--soft);border:1px solid var(--line)}
+.chip.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.inmetro{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.inmetro span{font:700 18px var(--f-display);width:34px;height:34px;border-radius:6px;display:grid;place-items:center;color:#fff}
+.actions{display:flex;flex-direction:column;gap:8px;min-width:220px}
+.btn{font:600 14px var(--f-body);border-radius:8px;padding:10px 14px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.55;cursor:progress}
+.alerts{display:flex;flex-direction:column;gap:6px}
+.alert{border-radius:8px;padding:8px 12px;font-size:13px;display:flex;gap:10px;align-items:baseline}
+.alert b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;flex:none}
+.alert.erro{background:var(--err-soft);color:var(--err)}
+.alert.atencao{background:var(--warn-soft);color:var(--warn)}
+.alert.info{background:var(--soft);color:var(--muted)}
+.tablebox{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{position:sticky;top:0;background:var(--soft);font:600 12px var(--f-body);color:var(--muted);z-index:1}
+td.f{width:34%}
+td.f .lab{font-weight:500}
+td.f .ex{color:var(--muted);font-size:12px;margin-top:3px}
+td.f .hint{color:var(--warn);font-size:12px;margin-top:3px}
+td.v{font-variant-numeric:tabular-nums;white-space:pre-line}
+td.v.mono{font-family:var(--f-mono);font-size:12px}
+td.v.na{color:var(--muted)}
+td.v.miss{color:var(--warn)}
+td.v input{font:13px var(--f-body);padding:5px 7px;border:1px dashed var(--warn);border-radius:6px;background:var(--warn-soft);color:var(--ink);width:100%;min-width:120px}
+.tag{display:inline-block;font:600 10px var(--f-body);text-transform:uppercase;letter-spacing:.06em;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:1px;background:var(--soft);color:var(--muted)}
+.tag.regra{background:var(--accent-soft);color:var(--accent)}
+.tag.manual{background:var(--warn-soft);color:var(--warn)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filters label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:13px;z-index:20;max-width:calc(100% - 32px)}
+.admin{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.admin p{margin:0 0 10px;color:var(--muted)}
+.admin input[type=file]{font-size:13px;max-width:100%}
+.health td.lvl{white-space:nowrap}
+.pics{display:flex;gap:10px;flex-wrap:wrap}
+.pics figure{margin:0;width:120px;display:flex;flex-direction:column;gap:4px}
+.pics img,.pics .nopic{width:120px;height:90px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px}
+.pics .nopic{display:grid;place-items:center;color:#5b6f70;font-size:12px}
+.pics figcaption{font-size:11px;color:var(--muted)}
+.ksp{display:flex;flex-direction:column;gap:10px}
+.ksphead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ksp ul{margin:0;padding-left:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:6px 24px}
+.ksp li{color:var(--muted)}.ksp li b{color:var(--ink);font-weight:600}
+.hier{background:var(--soft);border-radius:8px;padding:10px 12px}
+.hier ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:3px;color:var(--muted)}.hier b{color:var(--ink);font-weight:600}
+.ksp details summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:13px}
+.ksp textarea{width:100%;font:13px var(--f-body);padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);margin:6px 0}
+.gloss td.t{font-weight:600;width:22%}
+.gloss td.src{font-size:12px;color:var(--muted);width:22%}
+.gloss td.cl{width:26%}
+.gloss .none{color:var(--muted);font-style:italic}
+.gloss td.ex{color:var(--muted);font-size:12px}
+.gloss td.src{white-space:pre-line}
+mark{background:var(--warn-soft);color:inherit;padding:0 1px;border-radius:2px}
+.empty{color:var(--muted);padding:30px;text-align:center}
+.photo{width:110px;height:110px;object-fit:contain;border:1px solid var(--line);border-radius:8px;background:#fff}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+dialog.confirm{border:1px solid var(--line);border-radius:14px;padding:0;max-width:min(620px,calc(100vw - 32px));width:100%;background:var(--panel);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog.confirm::backdrop{background:rgba(8,20,20,.45)}
+.cf-head{padding:18px 20px 6px}.cf-head h3{margin:0;font-family:var(--f-display);font-size:1.15rem}
+.cf-body{padding:6px 20px 4px;max-height:min(60vh,520px);overflow:auto;display:flex;flex-direction:column;gap:12px}
+.cf-kv{display:grid;grid-template-columns:110px 1fr;gap:4px 12px;font-size:13px}.cf-kv dt{color:var(--muted)}.cf-kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.cf-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.cf-list li{padding:8px 10px;border-radius:8px;background:var(--soft)}
+.cf-list li.erro{background:var(--err-soft);color:var(--err)}.cf-list li.atencao{background:var(--warn-soft);color:var(--warn)}
+.cf-list li b{color:var(--ink)}
+.cf-ok{padding:10px 12px;border-radius:8px;background:var(--ok-soft);color:var(--ok);font-size:13px}
+.cf-check{display:flex;gap:10px;align-items:flex-start;padding:12px 20px;border-top:1px solid var(--line);margin-top:10px;font-weight:600}
+.cf-check input{width:18px;height:18px;margin-top:1px;accent-color:var(--accent);flex:none}
+.cf-foot{display:flex;justify-content:flex-end;gap:10px;padding:0 20px 18px;flex-wrap:wrap}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+table.log{width:100%;border-collapse:collapse;font-size:12.5px}table.log th,table.log td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.log th{color:var(--muted);font-weight:600}.logwrap{overflow-x:auto}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Cadastro AC Hisense</h1>
+      <p class="sub">Escolha o cliente e o produto. Os campos já saem preenchidos a partir da base de produtos.</p>
+    </div>
+    <div class="basebadge" id="baseInfo">Carregando base…</div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-cadastro" aria-selected="true" data-view="cadastro">Cadastro</button>
+    <button role="tab" id="tab-glossario" aria-selected="false" data-view="glossario">Glossário</button>
+    <button role="tab" id="tab-conferencia" aria-selected="false" data-view="conferencia">Conferência da base</button>
+    <button role="tab" id="tab-admin" aria-selected="false" data-view="admin">Atualizar base</button>
+  </nav>
+
+  <section id="view-cadastro" class="grid">
+    <aside class="side">
+      <div class="box">
+        <p class="label">1. Cliente</p>
+        <div class="seg" id="clients"></div>
+        <p class="sub" style="font-size:12px;margin-top:8px">Cliente sem formulário próprio: use a Ficha Hisense (padrão).</p>
+      </div>
+      <div class="box">
+        <p class="label">2. Produto</p>
+        <input type="search" id="q" placeholder="Buscar por modelo, BTUs ou tipo" aria-label="Buscar produto">
+        <div class="selinfo"><span id="selCount"></span><button class="link" id="clearSel" hidden>Limpar seleção</button></div>
+        <div class="list" id="kitList"></div>
+      </div>
+    </aside>
+    <div class="main" id="work"><div class="box empty">Selecione um produto na lista.</div></div>
+  </section>
+
+  <section id="view-glossario" hidden>
+    <div class="box" style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <p class="label">Glossário de campos</p>
+        <p class="sub">Cada linha é uma informação do produto. Veja como a Hisense chama, de onde vem na base e como cada cliente pede no formulário.</p>
+      </div>
+      <div class="filters">
+        <input type="search" id="gq" placeholder="Buscar termo, ex.: sucção, EAN, ruído" aria-label="Buscar no glossário" style="max-width:360px">
+        <label><input type="checkbox" id="gAll"> Incluir campos da base que nenhum cliente pede</label>
+        <span class="chip" id="gCount"></span>
+      </div>
+      <div class="tablebox"><table class="gloss"><thead id="gHead"></thead><tbody id="gBody"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="view-conferencia" hidden>
+    <div class="box" style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <p class="label">Conferência automática</p>
+        <p class="sub">Regras que rodam em todos os produtos em linha. Erro indica dado que quase certamente está errado na base. Atenção indica algo para conferir.</p>
+      </div>
+      <div class="filters">
+        <label><input type="checkbox" id="fErr" checked> Erros</label>
+        <label><input type="checkbox" id="fWarn" checked> Atenção</label>
+        <span class="chip" id="healthCount"></span>
+      </div>
+      <div class="tablebox"><table class="health"><thead><tr><th>Nível</th><th>Produto</th><th>O que foi encontrado</th></tr></thead><tbody id="healthBody"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="view-admin" hidden>
+    <div class="admin">
+      <div class="box">
+        <p class="label">Base de produtos</p>
+        <p>Suba a planilha de modelos em Excel (aba <b>Infos AC_Hisense</b>). Todo mundo que abrir o app passa a ver a versão nova.</p>
+        <input type="file" id="upBase" accept=".xlsx">
+        <p id="upBaseMsg" style="margin-top:10px"></p>
+      </div>
+      <div class="box">
+        <p class="label">Cabeçalho e imagem da família</p>
+        <p>Nomeie cada arquivo com a família, a linha ou o tipo de produto. Exemplos: <code>Split Hi-Wall Frio.jpg</code>, <code>Eco Plus II.jpg</code>, <code>Hi-Efficiency Quente e Frio.jpg</code>. O app usa o nome mais específico que encontrar.</p>
+        <label class="sub" for="upHeads" style="display:block;margin:6px 0 4px">Cabeçalhos (faixa do topo, formato largo)</label>
+        <input type="file" id="upHeads" accept="image/png,image/jpeg,image/webp" multiple>
+        <label class="sub" for="upHeroes" style="display:block;margin:12px 0 4px">Imagem principal da família (substitui as fotos das unidades)</label>
+        <input type="file" id="upHeroes" accept="image/png,image/jpeg,image/webp" multiple>
+        <p id="upFamMsg" style="margin-top:10px"></p>
+        <p id="famStatus" class="sub" style="font-size:12px;white-space:pre-line"></p>
+      </div>
+      <div class="box">
+        <p class="label">Logo da ficha técnica e da planilha Hisense</p>
+        <p>Imagem PNG ou JPG do logo oficial. Aparece no topo do PDF e da planilha Ficha Hisense.</p>
+        <input type="file" id="upLogo" accept="image/png,image/jpeg">
+        <p id="upLogoMsg" style="margin-top:10px"></p>
+      </div>
+      <div class="box">
+        <p class="label">Fotos dos produtos</p>
+        <p>Selecione várias fotos de uma vez. O nome de cada arquivo diz a qual produto ela pertence:</p>
+        <ul style="margin:0 0 10px;padding-left:18px;color:var(--muted);font-size:13px">
+          <li>pelo modelo: <code>AS-12TW2RLCHB00E.jpg</code> (para <code>PE-QFA/B1</code>, use <code>PE-QFA-B1.jpg</code>)</li>
+          <li>ou pela linha e unidade, valendo para todas as capacidades: <code>Hi-Multi evaporadora.jpg</code>, <code>Hi-Multi condensadora.jpg</code></li>
+        </ul>
+        <input type="file" id="upPhotos" accept="image/png,image/jpeg,image/webp" multiple>
+        <p id="upPhotosMsg" style="margin-top:10px"></p>
+        <p id="missingPhotos" class="sub" style="font-size:12px"></p>
+      </div>
+      <div class="box">
+        <p class="label">Unidades sem par</p>
+        <p>Evaporadoras ou condensadoras em linha que o app não conseguiu juntar num conjunto.</p>
+        <div id="orphans" style="font:12px var(--f-mono);display:flex;flex-direction:column;gap:3px"></div>
+      </div>
+    </div>
+    <div class="box" style="margin-top:16px">
+      <p class="label">Histórico de downloads</p>
+      <p>Cada download confirmado fica registrado aqui: quem baixou, quando, para qual cliente e com quais pendências. Só quem edita o app vê esta lista.</p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0"><button class="btn ghost" id="logReload" type="button">Atualizar lista</button><span class="sub" id="logMsg"></span></div>
+      <div class="logwrap"><table class="log" id="logTable"></table></div>
+    </div>
+    <p class="sub" id="adminNote" style="margin-top:12px"></p>
+  </section>
+  <dialog class="confirm" id="cfDlg" aria-labelledby="cfTitle"></dialog>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+"use strict";
+/* ===================== utilidades ===================== */
+const $=s=>document.querySelector(s);
+const el=(t,a={},...kids)=>{const e=document.createElement(t);for(const[k,v]of Object.entries(a)){if(k==='class')e.className=v;else if(k==='text')e.textContent=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(v!==false&&v!=null)e.setAttribute(k,v===true?'':v)}for(const c of kids.flat()){if(c==null||c===false||c==="")continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}return e};
+const toast=(m)=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,4200)};
+const MISSING=undefined;
+const isNA=v=>v==null||/^\s*(-|–|n\/?a|na|não se aplica)\s*$/i.test(String(v));
+const nfmt=(n,d)=>{const x=Number(n);if(!isFinite(x))return String(n);return x.toLocaleString('pt-BR',{maximumFractionDigits:d??2})};
+const sn=v=>{if(v===MISSING)return MISSING;if(v==='N/A')return v;const s=String(v).trim().toLowerCase();if(s.startsWith('sim'))return 'Sim';if(s.startsWith('não')||s.startsWith('nao'))return 'Não';return String(v).trim()};
+const trimModel=m=>String(m||'').replace(/\s+/g,' ').trim();
+const safeId=s=>String(s).replace(/[^A-Za-z0-9_-]/g,'_');
+
+/* ===================== estado ===================== */
+const S={cap:{},sel:new Set(),ksp:{},unitPhotos:{},hier:{},heads:{},heroes:{},canEdit:false,base:null,baseMeta:{source:'arquivo publicado',name:'AR-CONDICIONADO_final.xlsx',at:null},kits:[],byModel:{},orphans:[],client:'centralar',kit:null,manual:{},logo:null,photos:{},cap:{}};
+
+/* ===================== conjuntos ===================== */
+// Conjuntos comerciais (cassete e piso teto). "confirmado" = mesmo par usado na ficha atual da Central Ar.
+const PAIRS=[
+ ['AUC-36TR4RKKAE','AUW-36T4RKC','PE-QFA/B1','confirmado'],
+ ['AUV-36TR4RKCAE','AUW-36T4RKC',null,'confirmado'],
+ ['AUV-60UR2RNCAE','AUW-60U2RNC',null,'confirmado'],
+ ['AUC-60TR2RNKAE','AUW-60T2RNC','PE-QFA/B','sugerido','Na ficha atual da Central Ar este cassete aparece com a condensadora AUW-60U2RNC (quente e frio), mas a evaporadora é só frio. O app usa a AUW-60T2RNC. Confirme o par.'],
+ ['AUC-60TR6RNKAE','AUW-60T6RNC','PE-QFA/B','sugerido'],
+ ['AUC-60UR2RNKAE','AUW-60U2RNC','PE-QFA/B','sugerido'],
+ ['AUV-60TR2RNCAE','AUW-60T2RNC',null,'sugerido'],
+ ['AUV-60TR6RNCAE','AUW-60T6RNC',null,'sugerido'],
+ ['AUV-52TR2RF3E','AUW-52T2RQ3C',null,'sugerido'],
+ ['AUV-36TR2RE3E','AUW-36T2RK3C',null,'sugerido'],
+ ['AUV-60TR2RF3E','AUW-60T2RN3C',null,'sugerido'],
+ ['AUC-60TR2RKC3E','AUW-60T2RN3C',null,'sugerido','Painel deste cassete não está definido na base. Confirme qual painel acompanha.'],
+ ['AUC-48TR2RKC3E','AUW-48T2RQ3C',null,'sugerido','Painel deste cassete não está definido na base. Confirme qual painel acompanha.'],
+ ['AUC-36TR2RJC3E','AUW-36T2RK3C',null,'sugerido','Painel deste cassete não está definido na base. Confirme qual painel acompanha.'],
+ ['AUC-24TR2RJC3E','AUW-24T2RJ3C',null,'sugerido','Painel deste cassete não está definido na base. Confirme qual painel acompanha.'],
+ ['AS-12UW5RXVQH00A','AS-12UW5RXV00A',null,'sugerido'],
+ ['AS-36UW2RKKVQ00E','AS-36UW2RKK00C',null,'sugerido','A condensadora deste par está como Fora de Linha na base.'],
+];
+const hwKey=m=>m.replace(/(CK|HB|TT|TD|VQH|VQ)?\d\dA?[EC]?$/,'');
+const isIn=r=>String(r.H||'').toLowerCase().startsWith('em linha');
+const lineOf=r=>isNA(r.O)?'':String(r.O).trim();
+const PROCEL={'Hi-Efficiency':[9000,12000,18000]};
+const procelOf=k=>!k.multiRole&&(PROCEL[k.line]||[]).includes(Number(k.btu))?'Sim':'Não';
+const DRIVE_URL='https://drive.google.com/drive/folders/1XxjnoJtQW8tBVAwJBEkh_mKbMir4rTtk?usp=sharing';
+function driveNoteText(kits){const ls=[...new Set(kits.map(k=>k.line).filter(Boolean))].map(l=>`“Excel ${l}”`);
+  const cat=ls.length?(ls.length===1?`a categoria ${ls[0]}`:`as categorias ${ls.slice(0,-1).join(', ')} e ${ls[ls.length-1]}`):'a categoria do produto';
+  return `Realize o download das imagens e dos manuais disponíveis no link do Google Drive. Para localizar os arquivos, acesse a pasta correspondente e selecione ${cat}. Link: ${DRIVE_URL}`}
+const cpStyle=(src,dst)=>{dst.style=JSON.parse(JSON.stringify(src.style||{}))};
+function cpCell(ws,r,c1,c2,withValue){const a=ws.getCell(r,c1),b=ws.getCell(r,c2);cpStyle(a,b);if(!withValue)return;const v=a.value;
+  if(v&&typeof v==='object'&&(v.formula||v.sharedFormula)){try{b.value={formula:a.formula}}catch(e){b.value=a.result??null}}else b.value=v==null?null:JSON.parse(JSON.stringify(v))}
+const parseRange=r=>{const m=/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/.exec(r);const cn=x=>[...x].reduce((n,ch)=>n*26+ch.charCodeAt(0)-64,0);return m?{c1:cn(m[1]),r1:+m[2],c2:cn(m[3]),r2:+m[4]}:null};
+const colL=n=>{let s='';while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s};
+const rng=o=>`${colL(o.c1)}${o.r1}:${colL(o.c2)}${o.r2}`;
+/* abre espaço para n produtos lado a lado: col0 = coluna do produto, stride = colunas por produto, lim = última linha do bloco */
+function widenSheet(ws,col0,stride,n,lim,opt={}){
+  if(n<=1)return;const add=stride*(n-1);const maxC=ws.columnCount;const lastC=col0+stride-1;
+  const merges=(ws.model.merges||[]).map(parseRange).filter(Boolean);
+  const touched=merges.filter(m=>m.r1<=lim&&m.c2>=col0);touched.forEach(m=>ws.unMergeCells(rng(m)));
+  // colunas depois do bloco do produto andam para a direita
+  for(let c=maxC;c>lastC;c--){const w=ws.getColumn(c).width;for(let r=1;r<=lim;r++){cpCell(ws,r,c,c+add,true);ws.getCell(r,c).value=null}ws.getColumn(c+add).width=w}
+  for(let i=1;i<n;i++)for(let j=0;j<stride;j++){const src=col0+j,dst=col0+j+stride*i;ws.getColumn(dst).width=ws.getColumn(src).width;
+    for(let r=1;r<=lim;r++){cpCell(ws,r,src,dst,opt.copyValues&&r>=(opt.valuesFrom||1))}}
+  for(const m of touched){if(m.c1>lastC)ws.mergeCells(rng({...m,c1:m.c1+add,c2:m.c2+add}));else if(opt.keepMerge&&opt.keepMerge(m))ws.mergeCells(rng(m));else ws.mergeCells(rng({...m,c2:m.c1<col0?m.c2+add:m.c2}))}
+  const dv=ws.dataValidations&&ws.dataValidations.model;if(dv)for(const[a,v]of Object.entries(dv)){const m=/^([A-Z]+)(\d+)$/.exec(a);if(!m)continue;const c=parseRange(a+':'+a).c1;if(c<col0||c>lastC)continue;for(let i=1;i<n;i++)dv[colL(c+stride*i)+m[2]]=JSON.parse(JSON.stringify(v))}
+}
+/* tipografia padrão nos campos preenchidos + altura de linha para caber o texto */
+const VAL_FONT={name:'Arial',size:10,color:{argb:'FF000000'}};
+function spanWidth(ws,r,c){const ms=(ws.model.merges||[]).map(parseRange).filter(Boolean);const m=ms.find(m=>r>=m.r1&&r<=m.r2&&c>=m.c1&&c<=m.c2)||{c1:c,c2:c,r1:r,r2:r};
+  let w=0;for(let i=m.c1;i<=m.c2;i++)w+=ws.getColumn(i).width||8.43;return {w,rows:m.r2-m.r1+1}}
+function putVal(ws,r,c,val,opt={}){const cell=ws.getCell(r,c);cell.value=val;
+  cell.font={...VAL_FONT,bold:!!opt.bold,size:opt.size||10};cell.alignment={horizontal:opt.h||'center',vertical:'middle',wrapText:true};
+  const {w,rows}=spanWidth(ws,r,c);const txt=String(val&&val.text||val);const per=Math.max(6,Math.floor(w*0.82*(10/(opt.size||10))));
+  const lines=txt.split('\n').reduce((n,l)=>n+Math.max(1,Math.ceil(l.length/per)),0);const need=lines*13.5+5;
+  if(rows===1){const row=ws.getRow(r);if(!row.height||row.height<need)row.height=Math.min(409,need)}}
+function lastUsedRow(ws){let last=0;ws.eachRow({includeEmpty:false},(row,n)=>{let has=false;row.eachCell(c=>{if(c.value!=null&&c.value!=='')has=true});if(has)last=n});return last}
+function addDriveNote(ws,row,kits,ncols){const n=Math.max(4,Math.min(ncols||ws.columnCount||8,20));
+  for(let c=1;c<=n;c++){const cell=ws.getCell(row,c);if(c>1&&cell.value==null)cell.value=null;cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF92D050'}}}
+  const a=ws.getCell(row,1);a.value={text:driveNoteText(kits),hyperlink:DRIVE_URL};a.font={name:'Arial',size:10,bold:true,color:{argb:'FF000000'},underline:false};a.alignment={vertical:'middle',wrapText:false}}
+// condensadora serve para a linha da evaporadora se o nome da linha bate (aceita "Cassete 8 Vias / Piso e Teto Pro Efficiency")
+function lineCompat(evLine,cdLine){if(!evLine||!cdLine)return false;if(evLine===cdLine)return true;
+  const parts=cdLine.split('/').map(x=>x.trim()).filter(Boolean);if(parts.length<2)return false;return parts.some(p=>evLine===p||evLine.startsWith(p+' ')||p.startsWith(evLine+' '))}
+const cyc=r=>/q/i.test(r.D||'')?'QF':'F';
+function buildKits(rows){
+  const by={};rows.forEach(r=>{r.F=trimModel(r.F);by[r.F]=r});
+  const inl=rows.filter(isIn);
+  const kits=[],used=new Set();
+  const typeOf=r=>String(r.I||'').toLowerCase();
+  const push=(evap,cond,panel,status,note)=>{[evap,cond,panel].filter(Boolean).forEach(u=>used.add(u.F));kits.push(makeKit(evap,cond,panel,status,note))};
+  const conds=inl.filter(r=>typeOf(r)==='condensadora'),panels=inl.filter(r=>typeOf(r)==='painel');
+  for(const e of inl.filter(r=>typeOf(r)==='evaporadora'&&groupOf(r)!=='Multi Split')){
+    let c=null,how='';
+    // 1) mesma linha + mesma família de capacidade + mesmo ciclo
+    const byLine=conds.filter(x=>groupOf(x)!=='Multi Split'&&lineCompat(lineOf(e),lineOf(x))&&famOf(x.F)===famOf(e.F)&&cyc(x)===cyc(e));
+    if(byLine.length===1){c=byLine[0];how='linha'}
+    else if(byLine.length>1){const hk=byLine.filter(x=>hwKey(x.F)===hwKey(e.F));if(hk.length===1){c=hk[0];how='linha'}}
+    // 2) Hi-Wall: mesma raiz de código
+    if(!c&&e.F.startsWith('AS-')){const k=hwKey(e.F);const cs=rows.filter(r=>typeOf(r)==='condensadora'&&hwKey(r.F)===k);c=cs.find(isIn)||cs[0]||null;how=c?(lineOf(c)&&lineOf(c)===lineOf(e)?'linha':'codigo'):''}
+    // 3) pares definidos à mão
+    if(!c){const pr=PAIRS.find(x=>x[0]===e.F);if(pr&&by[pr[1]]){c=by[pr[1]];how='manual'}}
+    if(!c)continue;
+    const panel=groupOf(e)==='Cassete'?(panels.find(x=>lineCompat(lineOf(e),lineOf(x)))||null):null;
+    const note=!isIn(c)?'A condensadora deste par está como Fora de Linha na base.':(groupOf(e)==='Cassete'&&!panel?'Nenhum painel da mesma linha foi encontrado na base.':null);
+    push(e,c,panel,how==='linha'?'linha':'sugerido',note);
+  }
+  for(const s of inl.filter(r=>typeOf(r)==='single'||groupOf(r)==='Multi Split'))push(s,null,null,groupOf(s)==='Multi Split'?'multi':'unidade única');
+  const orphans=inl.filter(r=>!used.has(r.F)&&['evaporadora','condensadora','painel'].includes(typeOf(r))).map(r=>r.F);
+  const order={'Split Hi-Wall':1,'Multi Split':2,'Cassete':3,'Piso e Teto':4,'Janela':5,'Portátil':6};
+  kits.sort((a,b)=>(order[a.group]||9)-(order[b.group]||9)||(a.line?0:1)-(b.line?0:1)||String(a.line||'').localeCompare(String(b.line||''))||(a.multiRole||'').localeCompare(b.multiRole||'')||a.btu-b.btu||(a.evap.D>b.evap.D?1:-1)||a.id.localeCompare(b.id));
+  return {kits,by,orphans};
+}
+function groupOf(r){const c=String(r.C||'').toLowerCase();if(c.includes('multi'))return 'Multi Split';if(c.startsWith('cassete'))return 'Cassete';if(c.includes('piso'))return 'Piso e Teto';if(c.includes('cassete'))return 'Cassete';if(c.includes('hi-wall'))return 'Split Hi-Wall';if(c.includes('janela'))return 'Janela';if(c.includes('port'))return 'Portátil';return r.C||'Outros'}
+function famOf(m){const x=String(m).match(/-(\d{2})/);return x?Number(x[1])*1000:null}
+function makeKit(evap,cond,panel,status,note){
+  const group=groupOf(evap);const sNum=Number(evap.S);const fam=(group==='Janela'&&isFinite(sNum)&&sNum>0)?sNum:(famOf(evap.F)||(isFinite(sNum)?sNum:0));
+  const ciclo=/q/i.test(evap.D)?'Quente e Frio':'Frio';
+  const lineTxt=isNA(evap.O)?'':String(evap.O);
+  const tipo=group==='Cassete'?(/8 vias/i.test(lineTxt)?'Cassete 8 vias':/vias/i.test(evap.G||'')?`Cassete ${String(evap.G).toLowerCase()}`:'Cassete'):group;
+  const multiRole=group==='Multi Split'?(String(evap.I||'').toLowerCase().startsWith('cond')?'Condensadora':'Evaporadora'):null;
+  const name=multiRole?`${multiRole} ${nfmt(fam)} BTUs · ${ciclo}`:`${tipo} ${nfmt(fam)} BTUs · ${ciclo}`;
+  const volt=isNA(evap.AP)?'':`${String(evap.AP).replace(/v$/i,'')}V`;
+  const wifi=sn(evap.BK)==='Sim'?' Wi-Fi':'';
+  const desc=multiRole?String(evap.E||evap.F).replace(/\s+/g,' ').trim():cond?`Ar-Condicionado ${group==='Split Hi-Wall'?'Split Hi-Wall':'Split '+group} Inverter${wifi} ${nfmt(evap.S)} BTUs ${ciclo} Hisense ${volt}`.replace(/\s+/g,' ').trim():String(evap.E||evap.F).trim();
+  const line=isNA(evap.O)?null:String(evap.O).trim();
+  return {id:evap.F,evap,cond,panel,units:[evap,cond,panel].filter(Boolean),status,note,group,btu:fam,ciclo,name,desc,line,multiRole,lineName:line||'Linha não informada',lineKey:group+'|'+(line||'')};
+}
+
+/* ===================== leitura de valores da base ===================== */
+// v(u,col): undefined = coluna ausente na base; 'N/A' = marcado como não se aplica
+const v=(u,c)=>{if(!u)return MISSING;if(!(c in u))return u.__panel?'N/A':MISSING;const x=u[c];return isNA(x)?'N/A':x};
+const ncm=x=>{if(x===MISSING||x==='N/A')return x;const d=String(x).replace(/\D/g,'');return d.length===8?`${d.slice(0,4)}.${d.slice(4,6)}.${d.slice(6)}`:String(x)};
+const cm=x=>{if(x===MISSING||x==='N/A')return x;const n=Number(x);return isFinite(n)?Math.round(n)/10:x};
+const naoPossui=x=>x==='N/A'?'Não possui':x;
+
+/* ===================== mapeamento por cliente ===================== */
+// src(u,k): valor para uma unidade (coluna da ficha). kit:true = mesmo valor em todas as colunas.
+// tipo: base (vem direto da base) | regra (convertido por regra) | manual (não está na base) | cliente (o próprio cliente preenche)
+const CENTRALAR=[
+ [7,"Código do Sku","Preenchimento CentralAr",'cliente',"Código que a Central Ar gera no sistema dela. Deixe em branco."],
+ [8,"Código Interno ERP","Preenchimento CentralAr",'cliente',"Código interno do ERP da Central Ar. Deixe em branco."],
+ [9,"UCN - Ultimo Custo Negociado ($)","",'manual',"Último custo negociado com o cliente. Vem da negociação comercial, não da base técnica."],
+ [10,"Código EAN","",'base',"Código de barras de 13 dígitos de cada unidade.",u=>v(u,'AA')],
+ [11,"Código Fornecedor","",'base',"Modelo Hisense da unidade, exatamente como na etiqueta.",u=>v(u,'F')],
+ [12,"NCM","",'regra',"Classificação fiscal da unidade, no formato 0000.00.00.",u=>ncm(v(u,'Z'))],
+ [13,"Origem Produto Nacional ou Importado","",'regra',"Convertido a partir do código de origem (CST). Origens 0, 3, 4, 5 e 8 são nacionais.",u=>{const x=v(u,'L');if(x===MISSING||x==='N/A')return x;const c=parseInt(String(x),10);return [0,3,4,5,8].includes(c)?'Nacional':'Importado'}],
+ [14,"Aliq. IPI (%)","",'base',"Alíquota de IPI em percentual. Produtos fabricados em Manaus com PPB ficam isentos (0%).",u=>ipiPct(v(u,'AC'))],
+ [15,"Aliq. ICMS (%)","",'manual',"Depende do estado de origem e destino da nota. Confirme com o fiscal."],
+ [16,"Capacidade BTU's (normalmente é a nominal)","ex: 24.000",'base',"Capacidade nominal de refrigeração em BTU/h.",u=>v(u,'S')],
+ [17,"Modelo/Familia (BTUs)","EX: Capacidade nominal 15.000BTUS se enquadra na família 18.000 ou 12000btus?",'regra',"Família comercial, tirada do número no modelo (AUC-60… é família 60.000, mesmo que a nominal seja 55.000).",(u,k)=>`${nfmt(k.btu)} BTUs`,true],
+ [18,"Voltagem 110v/220v/380v","Se modelo Bivolt, informar as duas fases",'regra',"Tensão de alimentação.",u=>{const x=v(u,'AP');return x===MISSING||x==='N/A'?x:`${String(x).replace(/v$/i,'')}V`}],
+ [19,"Nova classificação energética INMETRO e Procel 2023, informar a classificação em que o produto obteve \"A\" - \"B\" etc...","EX: selo \"A\" PROCEL OURO",'base',"Letra da etiqueta Inmetro (A é a mais eficiente). Hi-Efficiency 9.000, 12.000 e 18.000 BTUs também têm Selo Procel.",(u,k)=>{const x=v(u,'AO');return x!==MISSING&&x!=='N/A'&&procelOf(k)==='Sim'?x+' + Selo Procel':x}],
+ [20,"Corrente Elétrica de Refrigeração (A)","SE NÃO POSSUIR, INFORMAR \"NÃO POSSUI\"",'base',"Corrente em ampères durante a refrigeração.",u=>u.__panel?'N/A':naoPossui(v(u,'AW'))],
+ [21,"Corrente Elétrica de Aquecimento (A)","SE NÃO POSSUIR, INFORMAR \"NÃO POSSUI\"",'base',"Corrente durante o aquecimento. Modelos só frio não possuem.",u=>u.__panel?'N/A':naoPossui(v(u,'AX'))],
+ [22,"Ciclo – Frio ou Quente ou Frio","",'regra',"Só frio, ou quente e frio (Q/F na base).",u=>{const x=v(u,'D');if(x===MISSING||x==='N/A')return x;return /q/i.test(x)?'Quente e Frio':'Frio'}],
+ [23,"Frequência (Hz)","",'base',"Frequência da rede elétrica.",u=>v(u,'AQ')],
+ [24,"Tipo de Fase MONO, BIFÁSICO ou TRIFÁSICO","",'regra',"Tipo de ligação elétrica.",u=>{const x=v(u,'AR');if(x===MISSING||x==='N/A')return x;const s=String(x).toLowerCase();return s.includes('mono')?'Monofásico':s.includes('tri')?'Trifásico':s.includes('bi')?'Bifásico':x}],
+ [25,"Potência de Aquecimento (W)","SE NÃO POSSUIR, INFORMAR \"NÃO POSSUI\"",'regra',"Potência elétrica no aquecimento. A base não tem esse dado para modelos quente e frio.",(u,k)=>u.__panel?'N/A':k.ciclo==='Frio'?'Não possui':MISSING],
+ [26,"Potência de Refrigeração (W)","SE NÃO POSSUIR, INFORMAR \"NÃO POSSUI\"",'base',"Potência elétrica consumida na refrigeração, em watts.",u=>{const x=v(u,'AS');return x===MISSING||x==='N/A'?x:`${x}W`}],
+ [27,"Vazão de Ar (m³/h)","",'base',"Volume de ar que a evaporadora movimenta por hora.",u=>v(u,'AZ')],
+ [28,"Tipo de Gás Refrigerante R-410 OU R-32","",'base',"Gás refrigerante do sistema.",u=>v(u,'K')],
+ [29,"Tipo de Tecnlogia do Compressor - inverter / on-off","",'base',"Inverter ajusta a velocidade do compressor; on-off liga e desliga.",u=>v(u,'J')],
+ [30,"Consumo de Energia (KWh/Ano)","",'base',"Consumo anual estimado da etiqueta Inmetro, em kWh por ano.",u=>v(u,'AV')],
+ [31,"Deflexão de Ar Acima e Abaixo \"SIM ou NÂO\"","EX: SIM ou NÃO",'base',"Se a aleta movimenta o ar para cima e para baixo (direcionador horizontal na base).",u=>sn(v(u,'CL'))],
+ [32,"Deflexão de Ar Acima e Abaixo \"Automático ou Manual\"","EX: AUTOMATICO ou MANUAL",'regra',"Regra do Produto: automático em split, multi split, cassete e piso e teto; manual na janela.",(u,k)=>u.__panel?'N/A':(['Split Hi-Wall','Multi Split','Cassete','Piso e Teto'].includes(k.group)?'Automático':k.group==='Janela'?'Manual':MISSING),true],
+ [33,"Deflexão de Ar Direita e Esquerda \"SIM ou NÃO\"","EX: SIM ou NÃO",'regra',"Regra do Produto: a janela tem ajuste manual (Sim); split não tem; portátil não se aplica. Nos demais vale a base.",(u,k)=>u.__panel?'N/A':(k.group==='Janela'?'Sim':['Split Hi-Wall','Multi Split'].includes(k.group)?'Não':k.group==='Portátil'?'Não aplicável':sn(v(k.evap,'CM'))),true],
+ [34,"Deflexão de Ar Direita e Esquerda \"Automático ou Manual\"","EX: AUTOMATICO ou MANUAL",'regra',"Regra do Produto: split não tem; janela é manual; portátil não se aplica. Cassete e piso e teto seguem a base (sem direcionador lateral = não possui).",(u,k)=>u.__panel?'N/A':(['Split Hi-Wall','Multi Split'].includes(k.group)?'Não possui':k.group==='Janela'?'Manual':k.group==='Portátil'?'Não aplicável':sn(v(k.evap,'CM'))==='Não'?'Não possui':MISSING),true],
+ [35,"Material da Serpentina - cobre Sim / Não","",'base',"Material dos tubos do trocador de calor.",u=>v(u,'BI')],
+ [36,"Controle Remoto? Sim / Não","",'base',"Se acompanha controle remoto.",u=>sn(v(u,'BX'))],
+ [37,"Controle Remoto Iluminado? Sim / Não","",'regra',"Regra do Produto: sim em todos os produtos que têm controle remoto.",(u,k)=>u.__panel?'N/A':(sn(v(k.evap,'BX'))==='Sim'?'Sim':'Não possui controle'),true],
+ [38,"Nível de Ruído Interno (db)","",'base',"Ruído da evaporadora em dB(A).",u=>v(u,'BG')],
+ [39,"Nível de Ruído Externo (db)","",'base',"Ruído da condensadora em dB(A).",u=>v(u,'BH')],
+ [40,"Diâmetro de Linha Sucção (pol)","",'base',"Tubo de gás (sucção), o mais grosso dos dois. Na base é a linha de gás.",u=>v(u,'CX')],
+ [41,"Diâmetro de Linha Líquido (pol)","",'base',"Tubo de líquido, o mais fino dos dois.",u=>v(u,'CW')],
+ [42,"Garantia do Produto - informar a garantia legal e se instalado por credenciado","COLOCAR CONFORME O MANUAL DO PRODUTO",'regra',"Garantia do produto e do compressor juntas.",u=>{const a=v(u,'CN'),b=v(u,'CO');const p=[a,b].filter(x=>x!==MISSING&&x!=='N/A');return p.length?p.join(' + '):a}],
+ [43,"Eficiencia Energética EER / IDRS","",'base',"Índice de eficiência sazonal. Quanto maior, mais econômico.",u=>{const b=v(u,'AU');return typeof b==='number'?nfmt(b):b}],
+ [44,"Tipo do Condensador (Horizontal/Vertical)","",'regra',"Regra do Produto: vertical só na linha Eco Plus II; horizontal no restante de split, multi split, cassete e piso e teto; não se aplica a janela e portátil.",(u,k)=>u.__panel?'N/A':(['Janela','Portátil'].includes(k.group)?'Não aplicável':k.line==='Eco Plus II'?'Vertical':'Horizontal'),true],
+ [45,"Largura do Produto SEM embalagem (cm)","",'regra',"Convertido de mm (base) para cm.",u=>cm(v(u,'AG'))],
+ [46,"Altura do Produto SEM embalagem (cm)","",'regra',"Convertido de mm para cm.",u=>cm(v(u,'AH'))],
+ [47,"Profundidade do Produto SEM embalagem (cm)","",'regra',"Convertido de mm para cm.",u=>cm(v(u,'AI'))],
+ [48,"Largura do Produto COM embalagem (cm)","",'regra',"Convertido de mm para cm.",u=>cm(v(u,'AJ'))],
+ [49,"Altura do Produto COM embalagem (cm)","",'regra',"Convertido de mm para cm.",u=>cm(v(u,'AK'))],
+ [50,"Profundidade do Produto COM embalagem (cm)","",'regra',"Convertido de mm para cm.",u=>cm(v(u,'AL'))],
+ [51,"Peso Líquido","",'base',"Peso da unidade sem embalagem, em kg.",u=>v(u,'AE')],
+ [52,"Peso Bruto","",'base',"Peso com embalagem, em kg.",u=>v(u,'AF')],
+ [53,"Conteúdo da Embalagem","",'base',"O que vem na caixa.",u=>v(u,'DP')],
+ [54,"Timer? Sim / Não","",'base',"Programação para ligar ou desligar.",u=>sn(v(u,'CD'))],
+ [55,"Regula Velocidade de Ventilação?  Sim / Não","",'base',"Se a velocidade do ventilador pode ser ajustada.",u=>sn(v(u,'BV'))],
+ [56,"Sleep? Sim / Não","",'base',"Modo noturno que ajusta a temperatura aos poucos.",u=>sn(v(u,'CS'))],
+ [57,"Swing? Sim / Não","",'base',"Aletas oscilando automaticamente.",u=>sn(v(u,'CE'))],
+ [58,"Memória? Sim / Não","",'regra',"Regra do Produto: memória é o reinício automático (Auto Restart) da base.",(u,k)=>u.__panel?'N/A':(sn(v(k.evap,'DK'))==='Sim'?'Sim':sn(v(k.evap,'DK'))==='Não'?'Não':MISSING),true],
+ [59,"Turbo? Sim / Não","",'base',"Refrigeração na potência máxima por um período.",u=>sn(v(u,'CI'))],
+ [60,"Aviso Limpar Filtro? Sim / Não","",'base',"Lembrete de limpeza do filtro.",u=>sn(v(u,'CJ'))],
+ [61,"Filtro Anti-Bactéria? Sim / Não","SIM / Não podendo informar o tipo de filtro também",'base',"Se tem filtro especial além do filtro comum.",u=>sn(v(u,'CA'))],
+ [62,"Função Brisa? Sim / Não","",'regra',"Regra do Produto: nenhum produto Hisense tem essa função (é recurso de concorrente).",(u,k)=>u.__panel?'N/A':'Não',true],
+ [63,"Proteção Anti-Corrosão? Sim / Não","",'base',"Tratamento contra corrosão, importante no litoral.",u=>sn(v(u,'CK'))],
+ [64,"Desumidificação? Sim / Não","",'regra',"Sim quando o produto tem modo Dry ou desumidificador.",u=>{const a=sn(v(u,'CR')),b=sn(v(u,'CU'));if(a===MISSING&&b===MISSING)return MISSING;if(a==='Sim'||b==='Sim')return 'Sim';if(a==='N/A'&&b==='N/A')return 'N/A';return 'Não'}],
+ [65,"Indicador de Temperatura na Evaporadora? SIM/NÃO","",'regra',"Sim quando a evaporadora tem display.",u=>{const x=v(u,'BS');if(x===MISSING||x==='N/A')return x;return sn(x)==='Não'?'Não':'Sim'}],
+ [66,"Controle de Temperatura Estável? Sim / Não","",'regra',"Regra do Produto: sim em todos os produtos.",(u,k)=>u.__panel?'N/A':'Sim',true],
+ [67,"Material da Condensadora - Plástico / Metal","",'base',"Material do gabinete da condensadora.",u=>v(u,'DC')],
+ [68,"Capacidade - Min/Nom/Máx (Btu's)","EX: 20.200 / 24.000/  26.500",'regra',"Faixa de capacidade do inverter: mínima, nominal e máxima.",u=>{const a=v(u,'R'),b=v(u,'S'),c=v(u,'T');if([a,b,c].every(x=>x===MISSING))return MISSING;if([a,b,c].every(x=>x==='N/A'||x===MISSING))return 'N/A';return [a,b,c].map(x=>x===MISSING||x==='N/A'||x==null||x===''?'—':nfmt(x,0)).join(' / ')}],
+ [69,"Cor da Condensadora","",'base',"Cor do gabinete externo.",(u,k)=>k.cond?v(k.cond,'BF'):'N/A',true],
+ [70,"Cor Evaporadora","",'base',"Cor do gabinete interno.",(u,k)=>v(k.evap,'BF'),true],
+ [71,"Ideal para Ambiente","",'regra',"Onde o produto é instalado, pelo tipo de produto.",(u,k)=>({'Cassete':'Teto (embutido no forro)','Piso e Teto':'Piso ou teto','Split Hi-Wall':'Parede','Multi Split':k.multiRole==='Condensadora'?'Área externa':'Parede','Janela':'Janela ou parede','Portátil':'Portátil'})[k.group]||MISSING,true],
+ [72,"Alimentação de Energia – pela condensadora ou evaporadora","",'regra',"Por qual unidade entra a energia elétrica.",u=>{const x=v(u,'AN');if(x===MISSING||x==='N/A')return x;return /odu/i.test(x)?'Condensadora':/idu/i.test(x)?'Evaporadora':x}],
+ [73,"Área de Abrangência (m²)","",'base',"Área aproximada que o produto atende.",u=>v(u,'BA')],
+ [74,"Quantidade de Componentes","",'regra',"Quantas unidades formam o produto (evaporadora, condensadora, painel).",(u,k)=>k.units.length,true],
+ [75,"Temperatura Mín e Máx (refrigeração/aquecimento)","",'base',"Faixa de temperatura que o controle permite.",u=>v(u,'BU')],
+ [76,"Acionamento após queda de energia (Automático/Manual)","",'regra',"Se volta a funcionar sozinho depois de uma queda de energia.",u=>{const x=v(u,'DN');if(x===MISSING||x==='N/A')return x;return sn(x)==='Sim'?'Automático':'Manual'}],
+ [77,"Plugue E Tomada (3 pinos 10A (4mm)/ 3 pinos 20A (4,8mm) ) para ar cond. JANELA","",'base',"Tipo de plugue. Splits são ligados por cabo direto.",u=>v(u,'BB')],
+ [78,"Comando de Voz SIM/NÃO","Se \"SIM\" Informar quais aplicativos",'regra',"Compatibilidade com Google Assistente ou Alexa.",u=>{const g=sn(v(u,'BM')),a=sn(v(u,'BN'));if(g===MISSING&&a===MISSING)return MISSING;const l=[g==='Sim'?'Google Assistente':null,a==='Sim'?'Alexa':null].filter(Boolean);if(l.length)return 'Sim ('+l.join(', ')+')';return g==='N/A'&&a==='N/A'?'N/A':'Não'}],
+ [79,"Conexão Remota Wi-Fi SIM/NÃO","\"SIM\" somente se vier juntamente ao produto, se môdulo adquirido separadamente, sinalizar que tem suporte, más vendido separadamente",'base',"Se o Wi-Fi já vem no produto.",u=>sn(v(u,'BK'))],
+ [80,"Código Anatel sistema Wi-Fi","",'base',"Homologação Anatel do módulo Wi-Fi.",u=>v(u,'BO')],
+ [81,"Modo Auto Clean? Sim / Não","",'base',"Limpeza automática da evaporadora.",u=>sn(v(u,'CT'))],
+ [82,"Modelo/ Descrição","",'base',"Nome comercial de cada unidade.",u=>v(u,'E')],
+].map(([row,label,hint,tipo,explain,src,kit])=>({row,label,hint,tipo,explain,src,kit}));
+
+const TERMS={7:["Código do SKU no cliente",[]],8:["Código interno (ERP) do cliente",[]],9:["Custo negociado",[]],10:["EAN",["AA"]],11:["Modelo Hisense",["F"]],12:["NCM",["Z"]],13:["Origem fiscal",["L"]],14:["Alíquota de IPI",["AC"]],15:["Alíquota de ICMS",[]],16:["Capacidade nominal de refrigeração",["S"]],17:["Família de capacidade",["F"]],18:["Tensão",["AP"]],19:["Classificação energética Inmetro",["AO"]],20:["Corrente de refrigeração",["AW"]],21:["Corrente de aquecimento",["AX"]],22:["Ciclo",["D"]],23:["Frequência",["AQ"]],24:["Fases",["AR"]],25:["Potência elétrica no aquecimento",[]],26:["Potência elétrica consumida",["AS"]],27:["Vazão de ar",["AZ"]],28:["Gás refrigerante",["K"]],29:["Tipo de compressor",["J"]],30:["Consumo anual de energia",["AV"]],31:["Direcionamento do ar para cima e para baixo",["CL"]],32:["Acionamento do direcionamento vertical",[]],33:["Direcionamento do ar para os lados",["CM"]],34:["Acionamento do direcionamento lateral",[]],35:["Material da serpentina",["BI"]],36:["Controle remoto",["BX"]],37:["Controle remoto iluminado",[]],38:["Ruído da evaporadora",["BG"]],39:["Ruído da condensadora",["BH"]],40:["Linha de gás (sucção)",["CX"]],41:["Linha de líquido",["CW"]],42:["Garantia",["CN", "CO"]],43:["Eficiência energética (EER e IDRS)",["AT", "AU"]],44:["Descarga de ar da condensadora",[]],45:["Largura do produto",["AG"]],46:["Altura do produto",["AH"]],47:["Profundidade do produto",["AI"]],48:["Largura da embalagem",["AJ"]],49:["Altura da embalagem",["AK"]],50:["Profundidade da embalagem",["AL"]],51:["Peso líquido",["AE"]],52:["Peso bruto",["AF"]],53:["Conteúdo da embalagem",["DP"]],54:["Timer",["CD"]],55:["Velocidades do ventilador",["BV"]],56:["Modo Sleep",["CS"]],57:["Swing",["CE"]],58:["Memória de configuração",[]],59:["Turbo",["CI"]],60:["Aviso de limpeza do filtro",["CJ"]],61:["Filtro especial",["CA"]],62:["Função brisa",[]],63:["Proteção anticorrosão",["CK"]],64:["Desumidificação",["CR", "CU"]],65:["Display na evaporadora",["BS"]],66:["Controle de temperatura estável",[]],67:["Material da condensadora",["DC"]],68:["Faixa de capacidade (mín / nom / máx)",["R", "S", "T"]],69:["Cor da condensadora",["BF"]],70:["Cor da evaporadora",["BF"]],71:["Ambiente de instalação",["C"]],72:["Alimentação elétrica",["AN"]],73:["Área atendida",["BA"]],74:["Quantidade de unidades",[]],75:["Faixa de temperatura",["BU"]],76:["Religamento após queda de energia",["DN"]],77:["Plugue",["BB"]],78:["Comando de voz",["BM", "BN"]],79:["Wi-Fi",["BK"]],80:["Homologação Anatel",["BO"]],81:["Auto Clean",["CT"]],82:["Nome comercial",["E"]]};
+CENTRALAR.forEach(f=>{const t=TERMS[f.row]||[f.label,[]];f.term=t[0];f.cols=t[1]});
+/* ===================== outros clientes ===================== */
+const FORN={cnpj:'16.538.529/0003-65',razao:'HISENSE GORENJE DO BRASIL IMPORTACAO E COMERCIO DE ELETRODOMESTICO LTD',uf:'SC',marca:'HISENSE',site:'https://hisense.com.br/produtos/ar-condicionado/'};
+const X={
+  ok:x=>x!==MISSING&&x!=null&&x!==''&&!isNA(x),
+  raw:(u,c)=>u&&X.ok(u[c])?u[c]:'',
+  dig:x=>String(x??'').replace(/\D/g,''),
+  ean:u=>u?X.dig(u.AA):'',
+  ncmD:u=>u?X.dig(u.Z):'',ncmDot:u=>u&&X.ok(u.Z)?ncm(u.Z):'',
+  cestD:u=>u?X.dig(u.Y):'',cestDot:u=>u&&X.ok(u.Y)?String(u.Y):'',
+  cst:u=>{const n=parseInt(String(u&&u.L||''),10);return isFinite(n)?n:''},
+  nacImp:u=>{const c=X.cst(u);return c===''?'':[0,3,4,5,8].includes(c)?'Nacional':[2,7].includes(c)?'Importado adquirido no mercado nacional':'Importado'},
+  ipiNum:u=>{const x=u&&u.AC;if(!X.ok(x))return '';const n=Number(x);return isFinite(n)?(n<=1?Math.round(n*10000)/100:n):x},
+  ipiFrac:u=>{const x=u&&u.AC;if(!X.ok(x))return '';const n=Number(x);return isFinite(n)?(n>1?n/100:n):x},
+  volt:u=>u&&X.ok(u.AP)?`${String(u.AP).replace(/v$/i,'')}V`:'',
+  cor:u=>u&&X.ok(u.BF)?String(u.BF).toUpperCase():'',
+  num:x=>{const n=Number(x);return X.ok(x)&&isFinite(n)?n:''},
+  cm:(u,c)=>{const n=X.num(u&&u[c]);return n===''?'':Math.round(n)/10},
+  m:(u,c)=>{const n=X.num(u&&u[c]);return n===''?'':Math.round(n)/1000},
+  dims:(u,a,b,c,f)=>u&&[a,b,c].every(x=>X.ok(u[x]))?[a,b,c].map(x=>f(Number(u[x]))).join(' x '):'',
+  garMeses:u=>{const t=String(u&&u.CN||'').toLowerCase();const n=parseFloat(t);if(!isFinite(n))return '';return /ano/.test(t)?n*12:n},
+  soma:(k,c)=>{const v=k.units.map(u=>Number(u[c])).filter(isFinite);return v.length===k.units.length?Math.round(v.reduce((a,b)=>a+b,0)*100)/100:''},
+  porUnidade:(k,fn)=>k.units.length===1?fn(k.evap):k.units.map(u=>`${roleOf(k,u)}: ${fn(u)||'—'}`).join(' | '),
+  ciclo:k=>k.ciclo,cicloQF:k=>k.ciclo==='Frio'?'Frio':'Q/F',
+  inverter:k=>/inverter/i.test(k.evap.J||'')?'Inverter':'Convencional',
+  sn:(u,c)=>{const x=sn(u&&u[c]);return x==='Sim'||x==='Não'?x:''},
+  snAny:(k,cs)=>cs.some(c=>sn(k.evap[c])==='Sim')?'Sim':'Não',
+  ksp:k=>kspFor(tkOf(k)).items.map(x=>x.t),
+  classif:k=>{const a=String(k.evap.AO||'').trim();return /^[A-G]$/.test(a)?a:X.ok(k.evap.AU)&&isFinite(Number(k.evap.AU))?`IDRS ${nfmt(k.evap.AU)}`:a},
+  cond:k=>k.multiRole==='Condensadora'?k.evap:k.cond,evapU:k=>k.multiRole==='Condensadora'?null:k.evap,
+};
+// F(coluna ou linha, rótulo do cliente, termo Hisense, função, tipo)  tipo: base | regra | manual | cliente
+const F=(at,label,term,fn,tipo)=>({at,label,term:term||label,fn,tipo:tipo||(fn?'base':'manual')});
+const CLI_DEFS={
+ adias:{name:'A.Dias',layout:'rows',template:'tpl/adias.b64.txt',sheets:[{sheet:'Padrão',start:3,fields:[
+  F('B','Cod. Fabric.','Modelo Hisense',k=>k.units.map(u=>u.F).join(' / ')),F('C','Descrição','Nome comercial',k=>k.desc),F('D','NCM','NCM',k=>X.ncmD(k.evap)),
+  F('E','Código CST (Origem)','Origem fiscal',k=>X.cst(k.evap)),F('F','Aliq. IPI','Alíquota de IPI',k=>ipiPct(k.evap.AC)),F('G','Aliq. ICMS','Alíquota de ICMS',null),
+  F('H','Bitola Liquida','Linha de líquido',k=>X.raw(k.evap,'CW')),F('I','Bitóla Sucção','Linha de gás (sucção)',k=>X.raw(k.evap,'CX')),F('J','Alimentação','Tensão',k=>X.volt(k.evap)),
+  F('K','Comprimento c/ emb. (ext)','Largura da embalagem',k=>X.num(X.cond(k)&&X.cond(k).AJ)),F('L','Largura c/ emb. (ext)','Profundidade da embalagem',k=>X.num(X.cond(k)&&X.cond(k).AL)),F('M','Altura c/ emb. (ext)','Altura da embalagem',k=>X.num(X.cond(k)&&X.cond(k).AK)),
+  F('N','Comprimento c/ emb. (int)','Largura da embalagem',k=>X.num(X.evapU(k)&&X.evapU(k).AJ)),F('O','Altura c/ emb. (int)','Altura da embalagem',k=>X.num(X.evapU(k)&&X.evapU(k).AK)),F('P','Largura c/ emb. (int)','Profundidade da embalagem',k=>X.num(X.evapU(k)&&X.evapU(k).AL)),
+  F('Q','Comprimento s/ emb. (int)','Largura do produto',k=>X.num(X.evapU(k)&&X.evapU(k).AG)),F('R','Altura s/ emb. (int)','Altura do produto',k=>X.num(X.evapU(k)&&X.evapU(k).AH)),F('S','Largura s/ emb. (int)','Profundidade do produto',k=>X.num(X.evapU(k)&&X.evapU(k).AI)),
+  F('T','Altura s/ emb. (ext)','Altura do produto',k=>X.num(X.cond(k)&&X.cond(k).AH)),F('U','Largura s/ emb. (ext)','Profundidade do produto',k=>X.num(X.cond(k)&&X.cond(k).AI)),F('V','Comprimento s/ emb. (ext)','Largura do produto',k=>X.num(X.cond(k)&&X.cond(k).AG)),
+  F('W','Peso Líquido (ext)','Peso líquido',k=>X.num(X.cond(k)&&X.cond(k).AE)),F('X','Peso Líquido (int)','Peso líquido',k=>X.num(X.evapU(k)&&X.evapU(k).AE)),F('Y','Peso Bruto (int)','Peso bruto',k=>X.num(X.evapU(k)&&X.evapU(k).AF)),F('Z','Peso Bruto (ext)','Peso bruto',k=>X.num(X.cond(k)&&X.cond(k).AF)),
+  F('AA','EAN (int)','EAN',k=>X.ean(X.evapU(k))),F('AB','EAN (ext)','EAN',k=>X.ean(X.cond(k))),F('AC','Vazão de Ar (m³/h) Interno','Vazão de ar',k=>X.raw(X.evapU(k),'AZ')),F('AD','Vazão de Ar (m³/h) Externo','Vazão de ar',null),
+  F('AE','Voltagem','Tensão',k=>X.volt(k.evap)),F('AF','Capacidade','Capacidade nominal de refrigeração',k=>X.num(k.evap.S)||k.btu),F('AG','Class. Energética (Selo Procel)','Classificação energética Inmetro',k=>X.classif(k)+(procelOf(k)==='Sim'?' + Selo Procel':''),'regra'),
+  F('AH','Tecnologia (Inverter ou Convencional)','Tipo de compressor',k=>X.inverter(k),'regra'),F('AI','Ciclo (Frio ou Q/F)','Ciclo',k=>X.cicloQF(k),'regra'),F('AJ','Climatiza até (m²)','Área atendida',k=>X.raw(k.evap,'BA')),
+  F('AK','Gás Refrigerante','Gás refrigerante',k=>X.raw(k.evap,'K')),F('AL','Cor','Cor da evaporadora',k=>X.cor(k.evap)),F('AM','Amperagem (A)','Corrente de refrigeração',k=>X.raw(k.evap,'AY')||X.raw(k.evap,'AW')),
+  F('AN','IDRS','Eficiência energética (EER e IDRS)',k=>X.raw(k.evap,'AU')),F('AO','Consumo (kWh/mês)','Consumo anual de energia',k=>{const n=X.num(k.evap.AV);return n===''?'':Math.round(n/12*10)/10},'regra'),
+  F('AP','Deflexão de Ar (Acima / Abaixo)','Direcionamento do ar para cima e para baixo',k=>X.sn(k.evap,'CL')),F('AQ','Deflexão de Ar (Direita / Esquerda)','Direcionamento do ar para os lados',k=>['Split Hi-Wall','Multi Split'].includes(k.group)?'Não':k.group==='Janela'?'Sim':X.sn(k.evap,'CM'),'regra'),
+  F('AR','Controle Remoto','Controle remoto',k=>X.sn(k.evap,'BX')),F('AS','Sensor de Presença','Sensor de presença',k=>X.sn(k.evap,'DG')||'Não'),F('AT','Filtro Anti-Pó','Filtro especial',k=>X.ok(k.evap.CA)?'Sim':''),
+  F('AU','Filtro Anti-Bactéria','Filtro especial',k=>/bact|prata|ag\+|catequ|hepa/i.test(String(k.evap.CA||'')+String(k.evap.CB||''))?'Sim':'Não','regra'),F('AV','Filtro Desodorizador','Filtro especial',k=>/desodor|carv|catequ/i.test(String(k.evap.CA||''))?'Sim':'Não','regra'),
+  F('AW','Auto Diagnóstico','Autodiagnóstico',k=>X.sn(k.evap,'DL')),F('AX','Função Automático','Modos de operação',k=>/auto/i.test(String(k.evap.CF||''))?'Sim':'Não','regra'),F('AY','Função Timer','Timer',k=>X.sn(k.evap,'CD')),
+  F('AZ','Função Sleep','Modo Sleep',k=>X.sn(k.evap,'CS')),F('BA','Desumidificação','Desumidificação',k=>X.snAny(k,['CR','CU']),'regra'),F('BB','Reinício Automático','Religamento após queda de energia',k=>X.sn(k.evap,'DK')),
+  F('BC','Proteção Anti-Corrosão','Proteção anticorrosão',k=>X.sn(k.evap,'CK')||X.sn(X.cond(k),'CK')),F('BD','Fabrica no Brasil','Fabricação',k=>/brasil/i.test(String(k.evap.M||''))?'Sim':'Não','regra'),F('BE','Ponto de Drenagem','Ponto de drenagem',null),
+  F('BF','Comp. Max. de Interligação (m)','Distância máxima entre unidades',k=>X.raw(k.evap,'CZ')),F('BG','Desnível Max. de Interligação (m)','Desnível máximo',k=>X.raw(k.evap,'CY')),
+  F('BH','Nível de Ruído Max. Interno','Ruído da evaporadora',k=>X.raw(X.evapU(k),'BG')),F('BI','Nível de Ruído Max. Externo','Ruído da condensadora',k=>X.raw(X.cond(k),'BH')),
+  F('BJ','Garantia Equipamento','Garantia',k=>X.raw(k.evap,'CN')),F('BK','Garantia Compressor','Garantia',k=>X.raw(k.evap,'CO')),F('BL','Serpentina','Material da serpentina',k=>X.raw(k.evap,'BI')),
+  F('BM','NCM Painel','NCM',k=>X.ncmD(k.panel)),F('BN','EAN Painel','EAN',k=>X.ean(k.panel)),F('BO','Cód Fabricante Painel','Modelo Hisense',k=>k.panel?k.panel.F:''),
+  F('BP','Peso Bruto Painel','Peso bruto',k=>X.num(k.panel&&k.panel.AF)),F('BQ','Peso Liquido Painel','Peso líquido',k=>X.num(k.panel&&k.panel.AE)),
+  F('BR','Altura c/ Embalagem Painel','Altura da embalagem',k=>X.num(k.panel&&k.panel.AK)),F('BS','Largura c/ Embalagem Painel','Profundidade da embalagem',k=>X.num(k.panel&&k.panel.AL)),F('BT','Comprimento c/ Embalagem Painel','Largura da embalagem',k=>X.num(k.panel&&k.panel.AJ)),
+  F('BU','Altura s/ Embalagem Painel','Altura do produto',k=>X.num(k.panel&&k.panel.AH)),F('BV','Largura s/ Embalagem Painel','Profundidade do produto',k=>X.num(k.panel&&k.panel.AI)),F('BW','Comprimento s/ Embalagem Painel','Largura do produto',k=>X.num(k.panel&&k.panel.AG)),
+  F('BX','Classificação do Inmetro','Classificação energética Inmetro',k=>X.raw(k.evap,'AO'))]}]},
+
+ belmicro:{name:'Bel Micro',layout:'rows',perUnit:true,template:'tpl/belmicro.b64.txt',sheets:[{sheet:'Comprebel',start:4,fields:[
+  F('B','SKU BELMICRO','Código do SKU no cliente',null,'cliente'),F('C','Cód. Fabricante','Modelo Hisense',(u)=>u.F),F('D','Modelo','Modelo Hisense',(u)=>u.F),
+  F('E','Razão Social','Fornecedor',()=>FORN.razao),F('F','Marca','Marca',()=>FORN.marca),F('G','Descrição Produto (Título)','Nome comercial',(u,k)=>X.ok(u.E)?String(u.E).trim():k.desc),
+  F('H','EAN13','EAN',u=>X.ean(u)),F('I','NCM','NCM',u=>X.ncmDot(u)),F('J','CEST','CEST',u=>X.cestDot(u)),F('K','CST','Origem fiscal',u=>X.cst(u)),
+  F('L','Voltagem','Tensão',u=>X.volt(u)),F('M','Fase','Fases',u=>{const x=String(u.AR||'').toLowerCase();return x.includes('mono')?'Monofásico':x.includes('tri')?'Trifásico':x.includes('bi')?'Bifásico':''}),
+  F('N','Cor','Cor da evaporadora',u=>X.cor(u)),F('O','Gás','Gás refrigerante',u=>X.raw(u,'K')),F('P','Ciclo','Ciclo',(u,k)=>k.ciclo),
+  F('Q','Nível de Ruído','Ruído da evaporadora',(u,k)=>roleOf(k,u)==='Condensadora'?X.raw(u,'BH'):X.raw(u,'BG')),F('R','Serpentina (Cobre ou Alumínio)','Material da serpentina',u=>X.raw(u,'BI')),
+  F('S','Dimensões Embalagem (AxLxP cm)','Altura da embalagem',u=>X.dims(u,'AK','AJ','AL',n=>nfmt(n/10))),F('T','Peso Bruto (kg)','Peso bruto',u=>X.num(u.AF)),
+  F('U','Dimensões Produto (AxLxP cm)','Altura do produto',u=>X.dims(u,'AH','AG','AI',n=>nfmt(n/10))),F('V','Peso Líquido (kg)','Peso líquido',u=>X.num(u.AE)),
+  F('W','Garantia Fabricação','Garantia',u=>X.raw(u,'CN')),F('X','Código de Homologação ANATEL','Homologação Anatel',u=>X.raw(u,'BO')),F('Y','Classificação INMETRO','Classificação energética Inmetro',(u,k)=>X.classif(k),'regra'),
+  F('Z','Características do produto','Descrição curta',(u,k)=>X.raw(tkOf(k).evap,'NC')),F('AA','Link Site Fabricante','Site',()=>FORN.site),F('AB','Imagem 1000x1000','Imagem',null)]}]},
+
+ bemol:{name:'Bemol',layout:'rows',template:'tpl/bemol.b64.txt',sheets:[
+  {sheet:'FRENTE',start:2,fields:[
+   F('A','EAN','EAN',k=>X.ean(k.evap)),F('B','Grupo de mercadorias','Grupo de mercadorias',null,'cliente'),F('C','Fornecedor','Fornecedor',()=>FORN.razao),
+   F('D','Código do fabricante','Modelo Hisense',k=>k.units.map(u=>u.F).join(' / ')),F('E','Código antecessor','Código antecessor',null,'cliente'),F('F','Marca','Marca',()=>FORN.marca),
+   F('G','Descrição curta','Nome comercial',k=>k.desc),F('H','Nº CRT. 40','Nº CRT. 40',null),F('I','Descrição longa','Descrição curta',k=>X.raw(tkOf(k).evap,'NC')),
+   F('N','NCM','NCM',k=>X.ncmD(k.evap)),F('O','Origem (0 Nacional, 1 Importado, 2 Nacionalizado)','Origem fiscal',k=>{const c=X.cst(k.evap);return c===''?'':[0,3,4,5,8].includes(c)?0:[2,7].includes(c)?2:1},'regra'),
+   F('P','VOL','Quantidade de unidades',k=>k.units.length,'regra'),F('Q','Caixa master','Caixa master',()=>1),F('R','Custo','Custo negociado',null),F('S','Venda','Preço de venda',null),F('X','Montável','Montável',null)]},
+  {sheet:'VERSO-CARACTERÍSTICAS',start:2,fields:[
+   F('A','EAN','EAN',k=>X.ean(k.evap)),F('B','Grupo','Grupo de mercadorias',null,'cliente'),F('C','Peso bruto (soma das caixas)','Peso bruto',k=>X.soma(k,'AF'),'regra'),F('D','Peso líquido (soma)','Peso líquido',k=>X.soma(k,'AE'),'regra'),
+   F('E','Comprimento (cm)','Largura da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AJ')),'regra'),F('F','Largura (cm)','Profundidade da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AL')),'regra'),F('G','Altura (cm)','Altura da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AK')),'regra'),
+   F('H','Código','Modelo Hisense',k=>k.units.map(u=>u.F).join(' / ')),F('I','Garantia','Garantia',k=>X.raw(k.evap,'CN')),
+   F('J','Característica 1','Diferenciais',k=>X.ksp(k)[0]||''),F('K','Característica 2','Diferenciais',k=>X.ksp(k)[1]||''),F('L','Característica 3','Diferenciais',k=>X.ksp(k)[2]||''),F('M','Característica 4','Diferenciais',k=>X.ksp(k)[3]||''),F('N','Característica 5','Diferenciais',k=>featuresOf([k]).map(f=>f.name).slice(0,6).join(', '))]}]},
+
+ climario:{name:'Climario',layout:'rows',template:'tpl/climario.b64.txt',clearRows:[5,6],sheets:[{sheet:'HWI_HISENSE',start:5,fields:[
+  F('B','SKU','Código do SKU no cliente',null,'cliente'),F('C','CNPJ Faturamento','CNPJ',()=>FORN.cnpj),F('D','Razão Social','Fornecedor',()=>FORN.razao),
+  F('E','Cód. Fabricante','Modelo Hisense',k=>k.units.map(u=>u.F).join(' / ')),F('F','Modelo','Modelo Hisense',k=>k.evap.F),F('G','Marca','Marca',()=>FORN.marca),
+  F('H','Descrição Produto (Protheus)','Nome comercial',k=>k.desc),F('I','Descrição Produto (Vtex)','Nome comercial',k=>k.desc),F('J','Voltagem','Tensão',k=>X.volt(k.evap)),F('K','Cor','Cor da evaporadora',k=>X.cor(k.evap)),
+  F('L','EAN13','EAN',k=>X.ean(k.evap)),F('M','UF Origem Faturamento','UF',()=>FORN.uf),F('N','Custo','Custo negociado',null),F('O','IPI','Alíquota de IPI',k=>X.ipiFrac(k.evap)),
+  F('P','ICMS ES','Alíquota de ICMS',null),F('Q','ICMS MG','Alíquota de ICMS',null),F('R','ICMS PB','Alíquota de ICMS',null),F('S','ICMS RJ','Alíquota de ICMS',null),F('T','PIS','PIS',null),F('U','COFINS','COFINS',null),
+  F('V','NCM','NCM',k=>X.ncmD(k.evap)),F('W','Caixa Master','Caixa master',()=>1),F('X','Modalidade Frete','Frete',null),
+  F('Y','Dimensões c/ embalagem (AxLxP cm)','Altura da embalagem',k=>X.porUnidade(k,u=>X.dims(u,'AK','AJ','AL',n=>nfmt(n/10))),'regra'),F('Z','Peso g (com embalagem)','Peso bruto',k=>{const s=X.soma(k,'AF');return s===''?'':Math.round(s*1000)},'regra'),
+  F('AA','Dimensões s/ embalagem (AxLxP cm)','Altura do produto',k=>X.porUnidade(k,u=>X.dims(u,'AH','AG','AI',n=>nfmt(n/10))),'regra'),F('AB','Peso g (sem embalagem)','Peso líquido',k=>{const s=X.soma(k,'AE');return s===''?'':Math.round(s*1000)},'regra'),
+  F('AC','Garantia Fabricação','Garantia',k=>X.raw(k.evap,'CN')),F('AD','SAC','SAC',k=>String(X.raw(k.evap,'DO')).replace(/\n/g,'  ')),F('AE','Características do Produto','Diferenciais',k=>X.ksp(k).map(t=>'• '+t).join('  ')),
+  F('AF','Procel','Selo Procel',k=>procelOf(k),'regra'),F('AG','Classificação INMETRO','Classificação energética Inmetro',k=>X.classif(k),'regra'),F('AH','Link Site Fabricante','Site',()=>FORN.site),F('AI','Link Imagem 1000x1000','Imagem',null)]}]},
+
+ magalu:{name:'Magazine Luiza',layout:'rows',template:'tpl/magalu.b64.txt',clearRows:[4],sheets:[{sheet:'Modelo Cadastro',start:4,fields:[
+  F('A','ID','Sequência',(k,i)=>i+1),F('B','Setor','Setor',()=>'AR E VENTILAÇÃO'),F('C','Tipo de Cadastro','Tipo de cadastro',null,'cliente'),F('D','Sortido','Sortido',()=>'NÃO'),F('E','Permite Consignado?','Consignado',()=>'NÃO'),
+  F('F','Kit','Kit',()=>'NÃO'),F('G','Multi-Volume','Quantidade de unidades',k=>k.units.length>1?'SIM':'NÃO','regra'),F('H','Tem especificação?','Especificação',()=>'NÃO'),
+  F('I','CNPJ','CNPJ',()=>FORN.cnpj),F('J','Razão Social','Fornecedor',()=>FORN.razao),F('K','Cidade/UF','UF',null),F('L','Ramo de Atividade','Ramo',()=>'Industrial'),
+  F('P','Linha','Categoria do cliente',()=>'AR - CONDICIONADOR DE AR'),
+  F('Q','Família','Categoria do cliente',k=>({'Cassete':'AR CONDICIONADO COMERCIAL','Piso e Teto':'AR CONDICIONADO COMERCIAL','Janela':'AR CONDICIONADO JANELA','Portátil':'AR CONDICIONADO PORTATIL'})[k.group]||'AR CONDICIONADO SPLIT','regra'),
+  F('R','Grupo','Categoria do cliente',k=>k.group==='Cassete'?'CASSETE':k.group==='Piso e Teto'?'PISO TETO':k.group==='Janela'?(/mec/i.test(String(k.evap.E||'')+String(k.evap.BS||''))||k.evap.F==='AW-07CMBRUGU00'?'MECANICO':'ELETRONICO'):k.group==='Portátil'?'PORTATIL - ON/OFF':`${X.inverter(k)==='Inverter'?'INVERTER':'ON-OFF'} - ${k.ciclo==='Frio'?'FRIO':'QUENTE-FRIO'}`,'regra'),
+  F('S','Subgrupo','Ciclo',k=>k.ciclo==='Frio'?'FRIO':'QUENTE-FRIO','regra'),F('T','Capacidade','Família de capacidade',k=>`${nfmt(k.group==='Janela'||k.group==='Portátil'?(X.num(k.evap.S)||k.btu):k.btu)} BTUS`,'regra'),
+  F('U','Especificação','Tensão',k=>{const v=String(k.evap.AP||'');return /bivolt/i.test(v)?'BIVOLT':/^1[12]/.test(v)?'110V':/^2[12]/.test(v)?'220V':'NA'},'regra'),F('V','Tipo de produto','Tipo de produto',k=>'AR CONDICIONADO'),
+  F('W','Tipo de experiência','Tipo',()=>'FISICO'),F('X','Código tipo de serviço','Tipo',()=>'0'),
+  F('Y','Descrição 40 caracteres','Nome comercial',k=>k.desc.toUpperCase().replace(/AR-CONDICIONADO/,'AR COND').slice(0,40),'regra'),F('Z','Descrição resumida','Nome comercial',k=>`${(GROUP_LABEL[k.group]||k.group).toUpperCase()} ${nfmt(k.btu)}`.slice(0,40),'regra'),
+  F('AA','Modelo 15 caracteres','Modelo Hisense',k=>k.evap.F.slice(0,15)),F('AB','Referência 15 caracteres','Modelo Hisense',k=>(k.cond?k.cond.F:k.evap.F).slice(0,15)),F('AC','Cor','Cor da evaporadora',k=>X.cor(k.evap)),
+  F('AD','Garantia em meses','Garantia',k=>X.garMeses(k.evap),'regra'),F('AE','Produto prazo validade','Validade',()=>'NÃO'),
+  F('AJ','Classificação fiscal','NCM',k=>X.ncmDot(k.evap)),F('AK','CEST','CEST',k=>X.cestDot(k.evap)),F('AL','IPI','Alíquota de IPI',k=>X.ipiNum(k.evap)),
+  F('AM','Origem','Origem fiscal',k=>{const c=X.cst(k.evap);return ['0-NACIONAL','1-IMP DIRETO','2-IMP AD INT','3-NAC SUP40 I70','4-NAC PPB','5-NAC INF40','6-IMP DIR CAMEX','7-IMP INT CAMEX','8-NAC SUP70'][c]||''},'regra'),
+  F('AO','PPB / SUFRAMA?','Origem fiscal',k=>X.cst(k.evap)===4?'SIM':'NÃO','regra'),F('AR','EAN','EAN',k=>X.ean(k.evap)),F('AS','GTIN/EAN','EAN',k=>X.ean(k.evap)),F('AT','Possui caixa mãe','Caixa master',()=>'NÃO'),
+  F('AV','Peso kg (soma das caixas)','Peso bruto',k=>X.soma(k,'AF'),'regra'),F('AW','A (cm)','Altura da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AK')),'regra'),F('AX','L (cm)','Largura da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AJ')),'regra'),F('AY','C (cm)','Profundidade da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AL')),'regra'),
+  F('BC','Preço de custo','Custo negociado',null),F('BD','Preço de venda','Preço de venda',null)]}]},
+
+ casasbahia:{name:'Casas Bahia',layout:'rows',template:'tpl/casasbahia.b64.txt',sheets:[{sheet:'Inclusão',start:9,fields:[
+  F('C','Descrição do produto','Nome comercial',k=>k.desc.toUpperCase()),F('J','EAN tributário','EAN',k=>X.ean(k.evap)),F('M','Setor','Categoria do cliente',null,'cliente'),
+  F('N','Espécie','Categoria do cliente',null,'cliente'),F('O','Sub espécie','Categoria do cliente',null,'cliente'),F('Q','Descrição modelo (15)','Modelo Hisense',k=>k.evap.F.slice(0,15)),
+  F('S','Origem do produto','Origem fiscal',k=>{const c=X.cst(k.evap);return ['0-Nacional-Exceto as indicadas Cód 3 a 5','1-Estrangeira -Importação direta, exceto a indicada no código 6','2-Estrangeira -Adquirida no mercado interno, exceto a indicada no código 7','3-Nacional-Mercadoria com conteúdo de importação superior a 40%','4-Nacional-Produção em conformidade com os processos produtivos básicos','5-Nacional-Mercadoria com conteúdo de importação inferior ou igual a 40%','6-Estrangeira -Importação direta, sem similar nacional','7-Estrangeira -Adquirida mercado interno, sem similar nacional','8-Nacional -Mercadoria com conteúdo de importação superior a 70%'][c]||''},'regra'),
+  F('T','Tipo de mercadoria','Tipo',()=>'1-Normal'),F('U','Modalidade','Modalidade',()=>'2-Pesado'),F('AH','Fabricante/Revendedor','Fornecedor',()=>'Fabricante'),
+  F('AM','Garantia fornecedor (meses)','Garantia',k=>X.garMeses(k.evap),'regra'),F('AN','Código produto fornecedor','Modelo Hisense',k=>k.units.map(u=>u.F).join('/').slice(0,35)),
+  F('AO','Código NCM','NCM',k=>X.ncmD(k.evap)),F('AQ','PPB','Origem fiscal',k=>X.cst(k.evap)===4?'Sim':'Não','regra'),F('AS','Código CEST','CEST',k=>X.cestD(k.evap)),F('AT','MP do Bem','MP do Bem',()=>'Não'),
+  F('AU','Taxa IPI (%)','Alíquota de IPI',k=>X.ipiNum(k.evap)),F('AV','Volume embalagem unitário','Quantidade de unidades',k=>k.units.length,'regra'),F('AW','Qtde caixa master','Caixa master',()=>1),F('AX','Qtde unidade no pack','Caixa master',()=>1),
+  F('AY','Embalagem altura (m)','Altura da embalagem',k=>X.porUnidade(k,u=>X.m(u,'AK')),'regra'),F('AZ','Embalagem largura (m)','Largura da embalagem',k=>X.porUnidade(k,u=>X.m(u,'AJ')),'regra'),F('BA','Embalagem profundidade (m)','Profundidade da embalagem',k=>X.porUnidade(k,u=>X.m(u,'AL')),'regra'),
+  F('BB','Produto altura (m)','Altura do produto',k=>X.porUnidade(k,u=>X.m(u,'AH')),'regra'),F('BC','Produto largura (m)','Largura do produto',k=>X.porUnidade(k,u=>X.m(u,'AG')),'regra'),F('BD','Produto profundidade (m)','Profundidade do produto',k=>X.porUnidade(k,u=>X.m(u,'AI')),'regra'),
+  F('BF','Peso bruto (kg, soma)','Peso bruto',k=>X.soma(k,'AF'),'regra'),F('BG','Peso líquido (kg, soma)','Peso líquido',k=>X.soma(k,'AE'),'regra'),F('BH','Unidade de venda','Unidade',()=>'P-Peça'),
+  F('BZ','Voltagem','Tensão',k=>{const v=String(k.evap.AP||'');return /bivolt/i.test(v)?'3 - Bivolt':/^1[12]/.test(v)?'1 - 110 Volts':/^2[12]/.test(v)?'2 - 220 Volts':'   - Não se aplica'},'regra'),F('CB','Descrição da cor','Cor da evaporadora',k=>X.cor(k.evap)),
+  F('D','Preço sugestão','Preço de venda',null),F('F','Custo à vista','Custo negociado',null)]}]},
+
+ telerio:{name:'Tele Rio',layout:'vertical',template:'tpl/telerio.b64.txt',sheet:'FICHA DE CADASTRO',col:'C',fields:[
+  F(5,'Descrição','Nome comercial',k=>k.desc),F(6,'SKU','Código do SKU no cliente',null,'cliente'),F(7,'NCM','NCM',k=>X.ncmDot(k.evap)),F(8,'CEST','CEST',k=>X.cestDot(k.evap)),
+  F(9,'Modelo','Modelo Hisense',k=>k.units.map(u=>u.F).join(' / ')),F(10,'Cor','Cor da evaporadora',k=>X.cor(k.evap)),F(11,'EAN','EAN',k=>X.porUnidade(k,u=>X.ean(u)),'regra'),
+  F(12,'CST','Origem fiscal',k=>X.cst(k.evap)),F(13,'Origem','Origem fiscal',k=>X.nacImp(k.evap),'regra'),F(14,'IPI%','Alíquota de IPI',k=>ipiPct(k.evap.AC)),F(15,'MVA','MVA',null),F(16,'ICM%','Alíquota de ICMS',null),
+  F(17,'Voltagem','Tensão',k=>X.volt(k.evap)),F(18,'Profundidade (cm, com embalagem)','Profundidade da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AL')),'regra'),F(19,'Altura (cm, com embalagem)','Altura da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AK')),'regra'),
+  F(20,'Largura (cm, com embalagem)','Largura da embalagem',k=>X.porUnidade(k,u=>X.cm(u,'AJ')),'regra'),F(21,'Peso (kg, bruto)','Peso bruto',k=>X.porUnidade(k,u=>X.num(u.AF)),'regra'),
+  F(22,'Potência','Potência elétrica consumida',k=>[X.ok(k.evap.S)?`${nfmt(k.evap.S)} BTU/h`:'',X.ok(k.evap.AS)?`${k.evap.AS} W`:''].filter(Boolean).join(' · '),'regra')]},
+
+ friopecas:{name:'Frio Peças',layout:'vertical',template:'tpl/friopecas.b64.txt',sheet:'MODELO FICHA AR CONDICIONADO',col:'B',fields:[
+  F(3,'Nome do fabricante','Fornecedor',()=>FORN.razao),F(4,'CNPJ de faturamento','CNPJ',()=>FORN.cnpj),F(5,'UF do CNPJ','UF',()=>FORN.uf),F(6,'NCM','NCM',k=>X.ncmDot(k.evap)),
+  F(7,'CST/Origem','Origem fiscal',k=>X.cst(k.evap)),F(8,'CEST','CEST',k=>X.cestDot(k.evap)),F(9,'IPI','Alíquota de IPI',k=>ipiPct(k.evap.AC)),F(10,'ICMS','Alíquota de ICMS',null),
+  F(11,'Fornecedor do Simples Nacional','Simples Nacional',()=>'NÃO'),F(12,'Nacional / importado','Origem fiscal',k=>X.nacImp(k.evap),'regra'),F(13,'Marca','Marca',()=>FORN.marca),
+  F(14,'Nome do produto','Nome comercial',k=>k.desc),F(15,'Nome do modelo','Linha comercial',k=>k.lineName),F(16,'Modelo Friopeças','Código do SKU no cliente',null,'cliente'),F(17,'Título anúncio no site','Nome comercial',k=>k.desc),
+  F(18,'Descritivo comercial','Descrição curta',k=>X.raw(tkOf(k).evap,'NC')),F(19,'Código de fábrica','Modelo Hisense',k=>k.units.map(u=>u.F).join(' / ')),F(20,'Código do modelo','Modelo Hisense',k=>k.evap.F),
+  F(21,'Número original','Número original',null),F(22,'Código ANP','Código ANP',()=>'Não se aplica'),F(23,'Código de homologação Anatel','Homologação Anatel',k=>X.raw(k.evap,'BO')),
+  F(24,'Certificação Inmetro','Registro Inmetro',k=>X.raw(k.evap,'AD')),F(25,'Garantia em meses','Garantia',k=>X.garMeses(k.evap),'regra'),F(26,'Classificação energética','Classificação energética Inmetro',k=>X.raw(k.evap,'AO')),
+  F(27,'Controlado por IBAMA','IBAMA',null),F(28,'Cor predominante','Cor da evaporadora',k=>X.cor(k.evap)),
+  F(29,'Tipo de condensadora (horizontal/barril)','Descarga de ar da condensadora',k=>['Janela','Portátil'].includes(k.group)?'Não se aplica':k.line==='Eco Plus II'?'Vertical':'Horizontal','regra'),
+  F(30,'Ciclo','Ciclo',k=>k.ciclo),F(31,'Tecnologia Inverter?','Tipo de compressor',k=>X.inverter(k)==='Inverter'?'Sim':'Não','regra'),F(32,'Indicador de temperatura na evaporadora?','Display na evaporadora',k=>X.sn(k.evap,'BS')||(X.ok(k.evap.BS)?'Sim':'Não'),'regra'),
+  F(33,'Modelo Wind Free?','Wind Free',()=>'Não'),F(34,'Sleep?','Modo Sleep',k=>X.sn(k.evap,'CS')),F(35,'Swing?','Swing',k=>X.sn(k.evap,'CE')),F(36,'Timer?','Timer',k=>X.sn(k.evap,'CD')),
+  F(37,'Turbo?','Turbo',k=>X.snAny(k,['CI','DE']),'regra'),F(38,'Desumidificação - modo Dry?','Desumidificação',k=>X.snAny(k,['CR','CU']),'regra'),F(39,'Auto limpeza','Auto Clean',k=>X.snAny(k,['CT','DF']),'regra'),
+  F(40,'Possui conectividade Wi-Fi?','Wi-Fi',k=>X.sn(k.evap,'BK')),F(41,'Wi-Fi incluso?','Wi-Fi',k=>X.sn(k.evap,'BK')),F(42,'Filtro anti-bactéria?','Filtro especial',k=>/bact|prata|ag\+|catequ|hepa/i.test(String(k.evap.CA||'')+String(k.evap.CB||''))?'Sim':'Não','regra'),
+  F(43,'Distância máxima entre evaporadora e condensadora','Distância máxima entre unidades',k=>X.raw(k.evap,'CZ')),F(44,'Gás refrigerante','Gás refrigerante',k=>X.raw(k.evap,'K')),F(45,'Serpentina','Material da serpentina',k=>X.raw(k.evap,'BI')),
+  F(46,'Tensão elétrica e fase','Tensão',k=>[X.volt(k.evap),X.raw(k.evap,'AR')].filter(Boolean).join(' · ')),F(47,'Potência','Potência elétrica consumida',k=>X.ok(k.evap.AS)?`${k.evap.AS} W`:''),
+  F(48,'Corrente máxima','Corrente de refrigeração',k=>X.raw(k.evap,'AY')||X.raw(k.evap,'AW')),F(49,'Vazão','Vazão de ar',k=>X.raw(k.evap,'AZ')),F(50,'Consumo anual (kWh/ano)','Consumo anual de energia',k=>X.raw(k.evap,'AV')),
+  F(51,'Informações técnicas de aplicação','Área atendida',k=>[X.ok(k.evap.BA)?`Área indicada: ${k.evap.BA}`:'',`Capacidade: ${nfmt(X.num(k.evap.S)||k.btu)} BTU/h`].filter(Boolean).join(' · '),'regra'),
+  F(52,'Dimensões sem embalagem (m) C x L x A','Largura do produto',k=>X.porUnidade(k,u=>X.dims(u,'AG','AI','AH',n=>nfmt(n/1000,3))),'regra'),F(53,'Dimensões com embalagem (m) C x L x A','Largura da embalagem',k=>X.porUnidade(k,u=>X.dims(u,'AJ','AL','AK',n=>nfmt(n/1000,3))),'regra'),
+  F(54,'Peso bruto (kg)','Peso bruto',k=>X.porUnidade(k,u=>X.num(u.AF)),'regra'),F(55,'Peso líquido (kg)','Peso líquido',k=>X.porUnidade(k,u=>X.num(u.AE)),'regra'),F(56,'Unidade de medida','Unidade',()=>'UN'),
+  F(57,'Código EAN (13 dígitos)','EAN',k=>X.porUnidade(k,u=>X.ean(u)),'regra'),F(58,'Tubulação de sucção','Linha de gás (sucção)',k=>X.raw(k.evap,'CX')),F(59,'Tubulação de descarga (líquido)','Linha de líquido',k=>X.raw(k.evap,'CW'))]},
+};
+// adapta para a tela (uma coluna por produto) e para o glossário
+for(const[key,d]of Object.entries(CLI_DEFS)){
+  const all=d.layout==='rows'?d.sheets.flatMap(s=>s.fields.map(f=>({...f,sheet:s.sheet}))):d.fields;
+  d.fields=all.map((f,i)=>({row:2000+i,label:f.label,hint:'',tipo:f.tipo,explain:f.tipo==='cliente'?'Preenchido pelo próprio cliente.':f.tipo==='manual'?'Não está na base Hisense: preencher manualmente.':'',term:f.term,cols:[],kit:true,
+    src:f.fn?(u,k)=>{try{const x=d.perUnit?f.fn(u,k):f.fn(k,0);return x===''||x==null?MISSING:x}catch(e){return MISSING}}:null}));
+  d.oneCol=!d.perUnit;d.def=all;
+}
+async function loadTpl(path){const b64=(await (await fetch(path)).text()).trim();const bin=atob(b64);const buf=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);const wb=new ExcelJS.Workbook();await wb.xlsx.load(buf);return wb}
+const cellv=x=>{if(x===MISSING||x==null||x==='N/A')return null;if(typeof x==='string'){const t=x.trim();if(t==='')return null;return t}return x};
+async function exportClient(c,kits){
+  const wb=await loadTpl(c.template);
+  if(c.layout==='rows'){
+    for(const sh of c.sheets){const ws=wb.getWorksheet(sh.sheet);if(!ws)throw new Error('Aba '+sh.sheet+' não encontrada no modelo');
+      for(const r of (c.clearRows||[]))ws.getRow(r).eachCell(cell=>{if(!cell.formula)cell.value=null});
+      let r=sh.start,i=0;
+      for(const k of kits){const items=c.perUnit?k.units:[k];
+        for(const u of items){for(const f of sh.fields){if(!f.fn)continue;let x;try{x=c.perUnit?f.fn(u,k):f.fn(k,i)}catch(e){x=null}const v=cellv(x);if(v!=null)ws.getCell(f.at+r).value=v}r++;i++}}
+      addDriveNote(ws,r,kits,12);
+    }
+  }else{
+    const src=wb.getWorksheet(c.sheet);const snap=JSON.stringify(src.model);const used=new Set();
+    for(const k of kits){let name=k.evap.F.replace(/[\\\/\?\*\[\]:]/g,'-').slice(0,31);let n=2;while(used.has(name))name=k.evap.F.slice(0,27)+' ('+(n++)+')';used.add(name);
+      const ws=wb.addWorksheet(name);const m=JSON.parse(snap);ws.model=Object.assign(m,{name,id:ws.id,mergeCells:m.merges});
+      for(const f of c.def){if(!f.fn)continue;let x;try{x=f.fn(k,0)}catch(e){x=null}const v=cellv(x);if(v!=null)putVal(ws,f.at,parseRange(c.col+'1:'+c.col+'1').c1,v,{h:'left'})}
+      addDriveNote(ws,lastUsedRow(ws)+2,[k],ws.columnCount)}
+    wb.removeWorksheet(src.id);
+  }
+  const out=await wb.xlsx.writeBuffer();
+  const fname=`Ficha ${c.name} - ${kits.length===1?kits[0].evap.F:kits.length+' produtos'}.xlsx`.normalize('NFD').replace(/[̀-ͯ]/g,'');
+  await offer(fname,new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+}
+const CLIENTS={
+ hisense:{name:'Ficha Hisense (padrão)',get fields(){return GENERIC},generic:true},
+ centralar:{name:'Central Ar',fields:CENTRALAR,cols:{evap:10,cond:11,panel:12},template:'template-centralar.b64.txt',sheet:'FICHA CENTRAL AR',
+   header:(ws,k)=>{
+     // colunas E a I ficam ocultas: nada visível depende delas e nenhuma mesclagem atravessa a parte oculta
+     for(const r of ['E1:L1','F2:L2','F3:J3','K3:L3','E4:L4'])try{ws.unMergeCells(r)}catch(e){}
+     for(let c=5;c<=9;c++)ws.getColumn(c).hidden=true;
+     const mv=(from,to,val)=>{const a=ws.getCell(from),b=ws.getCell(to);cpStyle(a,b);b.value=val===undefined?a.value:val;a.value=null};
+     mv('E1','J1');ws.getCell('J1').font={...(ws.getCell('J1').font||{}),name:'Arial',size:16,bold:true};ws.getCell('J1').alignment={horizontal:'center',vertical:'middle',wrapText:true};ws.mergeCells('J1:L1');
+     mv('F2','J2',k.desc);ws.mergeCells('J2:L2');putVal(ws,2,10,k.desc,{bold:true});
+     mv('F3','J3','HISENSE');ws.getCell('K3').value=null;ws.mergeCells('J3:L3');putVal(ws,3,10,'HISENSE',{bold:true});
+     putVal(ws,2,4,k.evap.F,{bold:true});
+     try{ws.mergeCells('J4:L4')}catch(e){}
+     const h=ws.getCell('J4');h.value=`${k.evap.F}  ·  ${k.desc}`;h.font={name:'Arial',size:10,bold:true,color:{argb:'FFFFFFFF'}};h.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF00807B'}};h.alignment={horizontal:'center',vertical:'middle',wrapText:true};ws.getRow(4).height=32;
+     ws.getCell('J6').value=k.multiRole?String(k.multiRole).toUpperCase():'EVAPORADORA'}},
+ ...CLI_DEFS
+};
+
+function valuesFor(k,clientKey){
+  const c=CLIENTS[clientKey];
+  const slots=[['evap',k.evap],['cond',k.cond],['panel',k.panel]].filter(x=>x[1]);if(c.oneCol)slots.length=1;
+  return c.fields.map(f=>{
+    const vals={};
+    for(const[slot,u]of slots){
+      let x;
+      if(f.tipo==='cliente')x='';
+      else if(!f.src)x=MISSING;
+      else x=f.src(u,k);
+      if(x===MISSING&&u.__panel)x='N/A';
+      const mk=`${k.id}|${f.row}|${slot}`;
+      if(x===MISSING&&S.manual[mk]!=null)x=S.manual[mk];
+      vals[slot]={value:x,manualKey:mk,missing:x===MISSING};
+    }
+    return {f,vals};
+  });
+}
+
+/* ===================== conferência ===================== */
+function eanOk(x){const d=String(x||'').replace(/\D/g,'');if(d.length!==13)return false;let s=0;for(let i=0;i<12;i++)s+=Number(d[i])*(i%2?3:1);return (10-s%10)%10===Number(d[12])}
+function checkKit(k){
+  const out=[];const E=k.evap,C=k.cond;const add=(lvl,msg)=>out.push({lvl,msg,kit:k});
+  const num=x=>{const n=Number(x);return isFinite(n)&&!isNA(x)?n:null};
+  if(C){
+    if(num(E.S)!==null&&num(C.S)!==null&&num(E.S)!==num(C.S))add('atencao',`Capacidade nominal diferente entre evaporadora (${nfmt(E.S)}) e condensadora (${nfmt(C.S)}). Confirme qual valor informar ao cliente.`);
+    if(E.D&&C.D&&(/q/i.test(E.D)!==/q/i.test(C.D)))add('erro',`Ciclo diferente: evaporadora ${E.D}, condensadora ${C.D}.`);
+    if(!isNA(E.AP)&&!isNA(C.AP)&&String(E.AP)!==String(C.AP))add('atencao',`Tensão diferente: evaporadora ${E.AP}, condensadora ${C.AP}.`);
+    if(!isNA(E.AV)&&!isNA(C.AV)&&String(E.AV)!==String(C.AV))add('atencao',`Consumo kWh/ano diferente entre as unidades (${E.AV} e ${C.AV}).`);
+  }
+  for(const u of k.units){
+    const tag=u.F;
+    if(!eanOk(u.AA))add('erro',`${tag}: EAN ${u.AA??'vazio'} inválido (dígito verificador não confere ou não tem 13 dígitos).`);
+    const n=String(u.Z??'').replace(/\D/g,'');if(n.length!==8)add('atencao',`${tag}: NCM "${u.Z??'vazio'}" não tem 8 dígitos.`);
+    if(num(u.AE)!==null&&num(u.AF)!==null&&num(u.AF)<num(u.AE))add('erro',`${tag}: peso bruto (${u.AF} kg) menor que o líquido (${u.AE} kg).`);
+    const d1=['AG','AH','AI'].map(c=>num(u[c])),d2=['AJ','AK','AL'].map(c=>num(u[c]));
+    if(d1.every(x=>x!==null)&&d2.every(x=>x!==null)){const a=[...d1].sort((x,y)=>x-y),b=[...d2].sort((x,y)=>x-y);if(a.some((x,i)=>x>b[i]))add('atencao',`${tag}: alguma medida do produto é maior que a da embalagem.`)}
+    if(u.__panel)continue;
+    if(num(u.S)!==null&&num(u.V)!==null){const r=num(u.S)/num(u.V);if(r<3.2||r>3.6)add('erro',`${tag}: capacidade em W (${nfmt(u.V)}) não corresponde a ${nfmt(u.S)} BTU/h. O esperado seria perto de ${nfmt(Math.round(num(u.S)/3.412))} W.`)}
+    if([u.R,u.S,u.T].every(x=>num(x)!==null)&&!(num(u.R)<=num(u.S)&&num(u.S)<=num(u.T)))add('atencao',`${tag}: capacidades mínima, nominal e máxima fora de ordem (${u.R} / ${u.S} / ${u.T}).`);
+    if(!String(u.H||'').toLowerCase().startsWith('em linha'))add('atencao',`${tag} está como Fora de Linha na base.`);
+  }
+  if(k.line){const peers=S.kits.filter(x=>x.lineKey===k.lineKey&&x!==k);
+    if(peers.length>=2)for(const[c,n]of FEATURES){const mine=featOn(k.evap,c);const yes=peers.filter(x=>featOn(x.evap,c)).length;
+      if(mine&&yes===0)add('atencao',`${n}: marcado como Sim só neste modelo da linha ${k.line}.`);else if(!mine&&yes===peers.length)add('atencao',`${n}: todos os outros modelos da linha ${k.line} têm, este não.`)}}
+  if(k.status==='sugerido')add('atencao',k.note||'Par montado pela regra de nomes dos modelos. Confirme se é esse o conjunto vendido.');
+  else if(k.note)add('atencao',k.note);
+  return out;
+}
+
+/* ===================== render: lista ===================== */
+function renderClients(){
+  const box=$('#clients');box.replaceChildren();
+  for(const[key,c]of Object.entries(CLIENTS))box.append(el('button',{'aria-pressed':String(S.client===key),onclick:()=>{S.client=key;renderClients();renderWork()}},c.name));
+}
+function matches(k,q){if(!q)return true;const hay=[k.name,k.group,k.lineName,...k.units.map(u=>u.F),String(k.btu),nfmt(k.btu)].join(' ').toLowerCase();return q.split(/\s+/).every(t=>hay.includes(t)||hay.includes(t.replace(/\./g,'')))}
+function saveSel(){}
+function setSel(ids,on){ids.forEach(id=>on?S.sel.add(id):S.sel.delete(id));saveSel();renderList();renderWork()}
+function focusKit(k){S.kit=k.id;renderList();renderWork();($('#photoTarget')||{}).textContent=k.name}
+function renderList(){
+  const q=$('#q').value.trim().toLowerCase();const box=$('#kitList');box.replaceChildren();
+  const vis=S.kits.filter(k=>matches(k,q));
+  $('#selCount').textContent=S.sel.size?`${S.sel.size} selecionado(s)`:'Nenhum selecionado';
+  $('#clearSel').hidden=!S.sel.size;
+  const groups=[...new Set(vis.map(k=>k.group))];
+  for(const g of groups){
+    box.append(el('div',{class:'cat'},g));
+    const lines=[...new Set(vis.filter(k=>k.group===g).map(k=>k.lineKey))];
+    for(const lk of lines){
+    const ks=vis.filter(k=>k.lineKey===lk);const ids=ks.map(k=>k.id);const n=ids.filter(id=>S.sel.has(id)).length;const ln=ks[0].lineName;
+    const cb=el('input',{type:'checkbox',id:'g_'+safeId(lk),'aria-label':`Selecionar linha ${ln}`});cb.checked=n===ids.length;cb.indeterminate=n>0&&n<ids.length;
+    cb.addEventListener('change',()=>setSel(ids,cb.checked));
+    box.append(el('label',{class:'grp'+(ks[0].line?'':' noline'),for:'g_'+safeId(lk)},cb,el('span',{class:'ln'},ln),el('span',{class:'cnt'},`${ks.length}`)));
+    for(const k of ks){
+      const c=el('input',{type:'checkbox',id:'k_'+safeId(k.id),'aria-label':`Selecionar ${k.name} ${k.id}`});c.checked=S.sel.has(k.id);
+      c.addEventListener('change',()=>setSel([k.id],c.checked));
+      box.append(el('div',{class:'row'},c,el('button',{class:'item','aria-current':String(S.kit===k.id),onclick:()=>{S.sel=new Set([k.id]);focusKit(k)}},
+        el('span',{},k.name),el('span',{class:'m'},k.units.map(u=>u.F).join(' + ')))));
+    }
+    }
+  }
+  if(!vis.length)box.append(el('div',{class:'empty'},'Nenhum produto encontrado.'));
+}
+function selectionBar(){
+  const kits=S.kits.filter(k=>S.sel.has(k.id));
+  if(!kits.length)return el('div',{class:'selbar muted'},el('span',{},'Clique num produto para abrir só ele. Para escolher vários, marque as caixas; a caixa ao lado do nome da linha marca a família inteira.'));
+  const c=CLIENTS[S.client];
+  const errs=kits.reduce((a,k)=>a+checkKit(k).filter(x=>x.lvl==='erro').length,0);
+  return el('div',{class:'selbar'},
+    el('div',{style:'min-width:0;display:flex;flex-direction:column;gap:8px'},
+      el('strong',{},`${kits.length} produto(s) selecionado(s)`+(errs?` · ${errs} erro(s) na base`:'')),
+      el('div',{class:'units'},kits.map(k=>el('button',{class:'unit selk','aria-current':String(S.kit===k.id),title:k.name,onclick:()=>focusKit(k)},k.evap.F,el('span',{class:'x',role:'button','aria-label':'Remover '+k.evap.F,onclick:e=>{e.stopPropagation();setSel([k.id],false)}},'×'))))),
+    el('div',{class:'actions'},
+      el('button',{class:'btn','data-act':'',onclick:()=>guarded('excel',kits,downloadXlsx)},c.generic?`Excel Ficha Hisense (${kits.length} produto${kits.length>1?'s':''})`:kits.length>1?`Excel ${c.name} (${kits.length} ${c.layout==='rows'?'produtos':'abas'})`:`Excel ${c.name}`),
+      el('button',{class:'btn ghost','data-act':'',onclick:()=>guarded('pdf',kits,downloadPdf)},(()=>{const n=new Set(kits.map(famKeyOf)).size;return n>1?`Fichas técnicas (${n} famílias, ZIP)`:'Ficha técnica da família (PDF)'})()),
+      el('button',{class:'link',onclick:()=>{S.sel.clear();renderList();renderWork()}},'Limpar seleção')));
+}
+
+/* ===================== render: trabalho ===================== */
+const INMETRO_COLORS={A:'#00873e',B:'#4ba53c',C:'#a9c42c',D:'#e7c400',E:'#e58a00',F:'#d4501c',G:'#c1121f'};
+function renderWork(){
+  const w=$('#work');const k=S.kits.find(x=>x.id===S.kit);
+  if(!k){w.replaceChildren(selectionBar(),el('div',{class:'box empty'},'Selecione um produto na lista.'));return}
+  const c=CLIENTS[S.client];const rows=valuesFor(k,S.client);const alerts=checkKit(k);
+  const missing=rows.filter(r=>Object.values(r.vals).some(x=>x.missing)).length;
+  const letter=String(k.evap.AO||'').trim().toUpperCase();
+  const pics=el('div',{class:'pics'},k.units.map(u=>{const src=unitImgSrc(k,u);return el('figure',{},src?el('img',{src,alt:`${roleOf(k,u)} ${u.F}`,loading:'lazy'}):el('div',{class:'nopic'},'Sem foto'),el('figcaption',{},roleOf(k,u)))}));
+  const summary=el('div',{class:'box summary'},
+    el('div',{style:'min-width:0;display:flex;flex-direction:column;gap:12px'},pics,el('div',{},
+      el('p',{class:'lineeyebrow'+(k.line?'':' noline')},k.lineName),
+      el('h2',{class:'kitname'},k.name),
+      el('div',{class:'units'},
+        el('span',{class:'unit'},el('b',{},k.cond?'Evaporadora':'Unidade'),k.evap.F),
+        k.cond&&el('span',{class:'unit'},el('b',{},'Condensadora'),k.cond.F),
+        k.panel&&el('span',{class:'unit'},el('b',{},'Painel'),k.panel.F)),
+      el('div',{class:'chips'},
+        el('span',{class:'chip '+(['confirmado','linha','unidade única','multi'].includes(k.status)?'ok':'warn')},({confirmado:'Conjunto confirmado',linha:'Conjunto da mesma linha na base','unidade única':'Unidade única',multi:'Unidade Multi Split, vendida separadamente'})[k.status]||'Conjunto sugerido, confirmar'),
+        el('span',{class:'chip'},`${nfmt(k.evap.S)} BTU/h`),
+        el('span',{class:'chip'},k.ciclo),
+        !isNA(k.evap.K)&&el('span',{class:'chip'},k.evap.K),
+        sn(k.evap.BK)==='Sim'&&el('span',{class:'chip'},'Wi-Fi'),
+        missing?el('span',{class:'chip warn'},`${missing} campo(s) para preencher à mão`):el('span',{class:'chip ok'},'Todos os campos preenchidos')))),
+    el('div',{class:'actions'},
+      INMETRO_COLORS[letter]&&el('div',{class:'inmetro'},el('span',{style:`background:${INMETRO_COLORS[letter]}`},letter),'Classificação Inmetro'),
+      el('button',{class:'btn',id:'btnXlsx','data-act':'',onclick:()=>guarded('excel',[k],downloadXlsx)},c.generic?'Baixar Ficha Hisense (Excel)':`Baixar ficha ${c.name} (Excel)`),
+      el('button',{class:'btn ghost',id:'btnPdf','data-act':'',onclick:()=>guarded('pdf',[k],downloadPdf)},'Ficha técnica da família (PDF)'),
+      el('span',{class:'sub',style:'font-size:12px'},`Família ${famTitle(k)}: ${famKits(k).length} modelo(s)`)));
+  const al=el('div',{class:'alerts'},alerts.map(a=>el('div',{class:'alert '+a.lvl},el('b',{},a.lvl==='erro'?'Erro na base':'Atenção'),el('span',{},a.msg))));
+  const slots=c.oneCol?[['evap','Produto',{F:k.units.map(u=>u.F).join(' + ')}]]:[['evap',k.cond?'Evaporadora':'Unidade',k.evap],['cond','Condensadora',k.cond],['panel','Painel',k.panel]].filter(x=>x[2]);
+  const tb=el('tbody');
+  for(const r of rows){
+    const tr=el('tr');
+    const tagTxt={base:'base',regra:'regra',manual:'manual',cliente:'cliente'}[r.f.tipo];
+    tr.append(el('td',{class:'f'},
+      el('div',{class:'lab'},r.f.label,el('span',{class:'tag '+(r.f.tipo==='regra'?'regra':r.f.tipo==='manual'?'manual':'')},tagTxt)),
+      el('div',{class:'ex'},r.f.explain),
+      r.f.term&&norm(r.f.term)!==norm(r.f.label)&&el('div',{class:'ex'},'Termo Hisense: ',el('b',{},r.f.term)),
+      r.f.hint&&r.f.tipo!=='cliente'&&el('div',{class:'hint'},'Instrução do cliente: '+r.f.hint)));
+    for(const[slot]of slots){
+      const x=r.vals[slot];
+      if(x.missing||(S.manual[x.manualKey]!=null&&r.f.tipo==='manual')){
+        const inp=el('input',{type:'text',id:'m_'+safeId(x.manualKey),value:S.manual[x.manualKey]??'',placeholder:'Preencher','aria-label':`${r.f.label} – ${slot}`});
+        inp.addEventListener('input',()=>{S.manual[x.manualKey]=inp.value||null;saveManual()});
+        tr.append(el('td',{class:'v'},inp));
+      }else{
+        const val=x.value;const cls='v'+(val==='N/A'?' na':'')+([10,11].includes(r.f.row)?' mono':'');
+        tr.append(el('td',{class:cls},r.f.tipo==='cliente'?'—':String(val)));
+      }
+    }
+    tb.append(tr);
+  }
+  const table=el('div',{class:'tablebox'},el('table',{},el('thead',{},el('tr',{},el('th',{},`Campo da ficha ${c.name}`),slots.map(s=>el('th',{},`${s[1]} · ${s[2].F}`)))),tb));
+  w.replaceChildren(selectionBar(),summary,kspBox(k),alerts.length?al:'',table);
+}
+function kspBox(k){
+  const {items,src}=kspFor(k);
+  const box=el('div',{class:'box ksp'},
+    el('div',{class:'ksphead'},
+      el('p',{class:'label',style:'margin:0'},'Principais diferenciais na ficha técnica (4)'),
+      el('span',{class:'chip '+(src==='editado'||src==='texto'?'ok':'')},src==='editado'||src==='produto'?'Texto definido pelo Produto':src==='texto'?'Da descrição longa da base':'Gerado a partir dos dados técnicos')),
+    el('ul',{},items.map(it=>el('li',{},el('b',{},it.t),it.d?' '+it.d:''))));
+  const h=hierFor(k);
+  if(h&&h.length)box.append(el('div',{class:'hier'},el('p',{class:'label',style:'margin:0 0 6px'},'Argumentos de venda por prioridade · uso interno, não vai para o PDF'),
+    el('ol',{},h.map(x=>el('li',{},el('b',{},x.t),x.msg?` · ${x.msg}`:'')))));
+  if(S.canEdit){
+    const ta=el('textarea',{id:'kspText',rows:'7','aria-label':'Editar diferenciais'});ta.value=items.map(it=>it.d?`${it.t} | ${it.d}`:it.t).join('\n');
+    const msg=el('span',{class:'sub',style:'font-size:12px'});
+    const save=el('button',{class:'btn',onclick:async()=>{const its=ta.value.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,4).map(l=>{const[t,...d]=l.split('|');return {t:t.trim(),d:d.join('|').trim()}});
+      S.ksp[k.id]=its;try{if(S.cap.db){await S.cap.db.doc('ksp/'+safeId(k.id)).set({kit:k.id,items:its});msg.textContent='Salvo para todos.'}else msg.textContent='Aplicado só nesta tela.'}catch(e){msg.textContent='Não foi possível salvar: '+(e.message||e.code)}renderWork()}},'Salvar diferenciais');
+    const reset=el('button',{class:'btn ghost',onclick:async()=>{delete S.ksp[k.id];try{if(S.cap.db)await S.cap.db.doc('ksp/'+safeId(k.id)).delete()}catch(e){}renderWork()}},'Voltar ao automático');
+    box.append(el('details',{},el('summary',{},'Editar diferenciais deste produto'),el('p',{class:'sub',style:'font-size:12px'},'Um diferencial por linha, no formato: Título | descrição. Até 4 linhas. Vale para a ficha da família inteira.'),ta,el('div',{class:'filters'},save,src==='editado'&&reset,msg)));
+  }
+  return box;
+}
+function renderFamStatus(){const el2=$('#famStatus');if(!el2||!S.kits)return;const seen=new Set();const lines=[];
+  for(const k of S.kits){const f=famKeyOf(k);if(seen.has(f))continue;seen.add(f);lines.push(`${famTitle(k)} ${k.ciclo}: cabeçalho ${headFor(k)?'ok':'padrão'} · imagem ${heroFor(k)?'ok':'fotos das unidades'}`)}
+  el2.textContent=lines.join('\n')}
+async function uploadFamImgs(files,kind){
+  const msg=$('#upFamMsg');const valid=new Set(S.kits.flatMap(famImgKeys));const ok=[],bad=[];msg.textContent=`Enviando ${files.length} imagem(ns)…`;
+  for(const f of files){const key=pkey(f.name.replace(/\.[^.]+$/,''));if(!valid.has(key)){bad.push(f.name);continue}
+    try{const url=URL.createObjectURL(f);const im=await loadImg(url);URL.revokeObjectURL(url);if(!im){bad.push(f.name);continue}
+      let src=im.data;const {assets,db}=S.cap;
+      if(assets&&db){const jb=await (await fetch(im.data)).blob();const up=await assets.upload(jb);src=up.url;await db.doc('fichaimgs/'+kind+'_'+key).set({kind,key,url:up.url})}
+      (kind==='head'?S.heads:S.heroes)[key]=src;ok.push(f.name)}catch(err){bad.push(f.name+' ('+(err.message||err.code)+')')}}
+  msg.textContent=`${ok.length} imagem(ns) aplicada(s)${S.cap.db?' para todos':' só nesta tela'}.`+(bad.length?` Nome não reconhecido: ${bad.join(', ')}.`:'');renderFamStatus()}
+function renderMissingPhotos(){const el2=$('#missingPhotos');if(!el2||!S.kits)return;const miss=[...new Set(S.kits.flatMap(k=>k.units.filter(u=>!unitImgSrc(k,u)).map(u=>u.F)))];
+  el2.textContent=miss.length?`Ainda sem foto (${miss.length}): ${miss.join(', ')}`:'Todos os produtos em linha têm foto.'}
+function saveManual(){try{localStorage.setItem('manual',JSON.stringify(S.manual))}catch(e){}}
+
+/* ===================== downloads ===================== */
+function dlProblem(msg,withPerms){
+  const dlg=$('#cfDlg');if(!dlg||typeof dlg.showModal!=='function'){toast(msg);return}
+  if(dlg.open)dlg.close();
+  const close=el('button',{class:'btn ghost',type:'button',onclick:()=>dlg.close()},'Fechar');
+  const perms=withPerms&&el('button',{class:'btn',type:'button',onclick:async()=>{try{const p=await window.claude.use('permissions');if(p&&p.manage)await p.manage()}catch(e){toast('Abra o menu Permissões do app (no topo da página) e libere Downloads.')}}},'Abrir permissões');
+  dlg.onclose=null;dlg.oncancel=null;
+  dlg.replaceChildren(el('div',{class:'cf-head'},el('h3',{},'O arquivo não foi baixado')),
+    el('div',{class:'cf-body'},el('p',{style:'margin:0'},msg),withPerms&&el('p',{class:'sub',style:'margin:0'},'Se você recusou o pedido de permissão para downloads, libere em Permissões e tente de novo. Se continuar, recarregue a página.')),
+    el('div',{class:'cf-foot',style:'margin-top:14px'},close,perms));
+  dlg.showModal();
+}
+async function offer(filename,blob){
+  const inRuntime=!!(window.claude&&window.claude.use);
+  let dl=S.cap&&S.cap.downloads;if(!dl&&inRuntime){try{dl=await window.claude.use('downloads')}catch(e){}}
+  if(dl){try{await dl.save({filename,data:blob});toast('Arquivo salvo.')}catch(e){console.error('save',e);const code=e&&e.code;
+      if(code==='declined'){toast('Download cancelado.');return}
+      if(code==='rate_limited'){dlProblem('Já existe uma janela de download aberta. Feche essa janela e clique em baixar de novo.');return}
+      if(['not_granted','unavailable','capability_disabled','capability_removed'].includes(code)){dlProblem(`Esta visualização não permitiu o download (código: ${code}).`,true);return}
+      dlProblem(`Não foi possível salvar o arquivo (${Math.round(blob.size/1024)} KB). Código: ${code||(e&&e.message)||'desconhecido'}.`);}
+    return}
+  if(inRuntime){dlProblem('O download não está liberado para você nesta visualização.',true);return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);
+}
+function setBusy(on){document.querySelectorAll('[data-act]').forEach(b=>b.disabled=on)}
+/* ===================== confirmação antes do download + registro ===================== */
+function pendingFor(kits,kind){
+  const c=CLIENTS[S.client];const items=[];
+  for(const k of kits){
+    for(const a of checkKit(k)){const m=/^([A-Z0-9][\w\-\/]*): (.*)$/s.exec(a.msg);items.push({lvl:a.lvl,kit:m?m[1]:k.evap.F,msg:m?m[2]:a.msg})}
+    if(kind==='excel'){let rows=[];try{rows=valuesFor(k,S.client)}catch(e){}
+      const manual=rows.filter(r=>r.f.tipo!=='cliente'&&Object.values(r.vals).some(x=>x.missing)).map(r=>r.f.label);
+      const cli=rows.filter(r=>r.f.tipo==='cliente').map(r=>r.f.label);
+      if(manual.length)items.push({lvl:'atencao',kit:k.evap.F,msg:`Fica em branco para preencher à mão: ${[...new Set(manual)].slice(0,8).join('; ')}${manual.length>8?` e mais ${manual.length-8}`:''}.`});
+      if(cli.length)items.push({lvl:'info',kit:k.evap.F,msg:`Campos que o próprio ${c.name} preenche: ${[...new Set(cli)].slice(0,6).join('; ')}${cli.length>6?'…':''}.`});}
+  }
+  return items;
+}
+function confirmDownload(kind,kits){
+  return new Promise(resolve=>{
+    const dlg=$('#cfDlg');const c=CLIENTS[S.client];
+    if(!dlg||typeof dlg.showModal!=='function'){resolve({items:[],errs:0,warns:0});return}
+    const items=pendingFor(kits,kind);const errs=items.filter(x=>x.lvl==='erro').length,warns=items.filter(x=>x.lvl==='atencao').length;
+    const fams=[...new Set(kits.map(k=>famTitle(k)+' '+k.ciclo))];
+    const chk=el('input',{type:'checkbox',id:'cfChk'});
+    const ok=el('button',{class:'btn',type:'button',disabled:true},'Baixar');
+    const cancel=el('button',{class:'btn ghost',type:'button'},'Voltar e revisar');
+    chk.addEventListener('change',()=>{ok.disabled=!chk.checked});
+    const done=v=>{dlg.close();resolve(v)};
+    ok.addEventListener('click',()=>done({items,errs,warns}));cancel.addEventListener('click',()=>done(null));
+    dlg.onclose=()=>resolve(null);dlg.oncancel=e=>{e.preventDefault();done(null)};
+    const byLvl=l=>items.filter(x=>x.lvl===l);
+    dlg.replaceChildren(
+      el('div',{class:'cf-head'},el('h3',{id:'cfTitle'},'Confira antes de baixar')),
+      el('div',{class:'cf-body'},
+        el('dl',{class:'cf-kv'},
+          el('dt',{},'Arquivo'),el('dd',{},kind==='excel'?`Excel ${c.generic?'Ficha Hisense (padrão)':c.name}`:(fams.length>1?`Fichas técnicas em PDF (${fams.length} famílias, ZIP)`:'Ficha técnica em PDF')),
+          kind==='excel'&&el('dt',{},'Cliente'),kind==='excel'&&el('dd',{},c.name),
+          el('dt',{},kits.length>1?`Produtos (${kits.length})`:'Produto'),el('dd',{},kits.map(k=>k.evap.F).join(', ')),
+          kind==='pdf'&&el('dt',{},'Família'),kind==='pdf'&&el('dd',{},fams.join(', '))),
+        items.length?el('ul',{class:'cf-list'},[...byLvl('erro'),...byLvl('atencao'),...byLvl('info')].map(x=>el('li',{class:x.lvl},el('b',{},x.kit+': '),x.msg)))
+          :el('div',{class:'cf-ok'},'Nenhuma pendência encontrada na base para esta seleção.')),
+      el('label',{class:'cf-check',for:'cfChk'},chk,el('span',{},items.length?`Revisei as informações e as pendências acima${errs?` (${errs} erro${errs>1?'s':''} na base)`:''}.`:'Revisei o cliente e os produtos acima.')),
+      el('div',{class:'cf-foot'},cancel,ok));
+    dlg.showModal();cancel.focus();
+  });
+}
+async function logDownload(kind,kits,r){
+  const db=S.cap&&S.cap.db,user=S.cap&&S.cap.user;if(!db)return;
+  try{const uid=user?await user.id().catch(()=>null):null;const c=CLIENTS[S.client];
+    await db.collection('dl').add({ts:Date.now(),uid:uid||'',kind,client:kind==='excel'?c.name:'',models:kits.map(k=>k.evap.F).slice(0,60),erros:r.errs,avisos:r.warns,base:String(S.baseMeta&&S.baseMeta.name||'')});
+  }catch(e){console.warn('log',e)}
+}
+async function guarded(kind,kits,fn){if(!kits||!kits.length)return;const r=await confirmDownload(kind,kits);if(!r)return;logDownload(kind,kits,r);return fn(kits)}
+async function loadLog(){
+  const t=$('#logTable'),msg=$('#logMsg');if(!t)return;const db=S.cap&&S.cap.db;
+  if(!db){msg.textContent='O histórico só aparece na página publicada.';return}
+  msg.textContent='Carregando…';
+  try{const q=await db.collection('dl').orderBy('ts','desc').limit(200).get();const rows=q.docs.map(d=>d.data()).filter(Boolean);
+    let names={};const ids=[...new Set(rows.map(r=>r.uid).filter(Boolean))];
+    if(ids.length&&S.cap.user&&S.cap.user.profiles){try{const ps=await S.cap.user.profiles(ids);for(const id of ids)names[id]=(ps[id]&&ps[id].name)||''}catch(e){}}
+    const fmt=ts=>{try{return new Date(Number(ts)).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}catch(e){return ''}};
+    t.replaceChildren(el('thead',{},el('tr',{},['Quando','Quem','Arquivo','Cliente','Produtos','Pendências'].map(h=>el('th',{},h)))),
+      el('tbody',{},rows.map(r=>el('tr',{},el('td',{},fmt(r.ts)),el('td',{},names[r.uid]||'Alguém sem nome visível'),el('td',{},r.kind==='pdf'?'PDF':'Excel'),el('td',{},String(r.client||'—')),
+        el('td',{style:'font-family:var(--f-mono);font-size:11.5px'},(Array.isArray(r.models)?r.models:[]).map(String).join(', ')),
+        el('td',{},`${Number(r.erros)||0} erro(s), ${Number(r.avisos)||0} aviso(s)`)))));
+    msg.textContent=rows.length?`${rows.length} download(s) mais recentes.`:'Nenhum download registrado ainda.';
+  }catch(e){msg.textContent='Não consegui carregar o histórico ('+(e&&e.code||e.message||'erro')+').'}
+}
+async function downloadXlsx(kits){
+  if(!kits.length)return;setBusy(true);
+  try{
+    const c=CLIENTS[S.client];
+    if(c.generic){await downloadGeneric(kits);return}
+    if(c.layout){await exportClient(c,kits);return}
+    const b64=(await (await fetch(c.template)).text()).trim();const bin=atob(b64);const buf=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);
+    const wb=new ExcelJS.Workbook();await wb.xlsx.load(buf);
+    const src=wb.getWorksheet(c.sheet)||wb.worksheets.find(s=>s.state!=='hidden');
+    const snap=JSON.stringify(src.model);const used=new Set();
+    for(const k of kits){
+      let name=k.evap.F.replace(/[\\\/\?\*\[\]:]/g,'-').slice(0,31);let n=2;while(used.has(name))name=(k.evap.F.slice(0,27)+' ('+(n++)+')');used.add(name);
+      const ws=wb.addWorksheet(name);const m=JSON.parse(snap);ws.model=Object.assign(m,{name,id:ws.id,mergeCells:m.merges});
+      c.header(ws,k);
+      for(const r of valuesFor(k,S.client))for(const[slot,x]of Object.entries(r.vals)){
+        if(r.f.tipo==='cliente')continue;
+        let val=x.value;if(val===MISSING||val===''||val==null)continue;
+        if(typeof val==='string'&&/^\d+(\.\d+)?$/.test(val)&&r.f.row!==12)val=Number(val);
+        putVal(ws,r.f.row,c.cols[slot],val);
+      }
+      addDriveNote(ws,lastUsedRow(ws)+2,[k],13);
+    }
+    wb.removeWorksheet(src.id);
+    for(const o of [...wb.worksheets])if(o.state!=='visible'&&!kits.some(k=>o.name.startsWith(k.evap.F.slice(0,27))))wb.removeWorksheet(o.id);
+    const out=await wb.xlsx.writeBuffer();
+    const fname=kits.length===1?`Ficha ${c.name} - ${kits[0].evap.F}.xlsx`:`Fichas ${c.name} - ${kits.length} produtos.xlsx`;
+    await offer(fname,new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  }catch(e){console.error(e);dlProblem('Erro ao gerar o Excel: '+(e&&e.message||e))}
+  finally{setBusy(false)}
+}
+
+/* ===================== PDF ficha técnica ===================== */
+async function toDataURL(url){const b=await (await fetch(url)).blob();return await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)})}
+const pv=(u,c,suf)=>{if(!u||!(c in u)||isNA(u[c]))return '—';const x=u[c];return (typeof x==='number'?(Number.isInteger(x)&&x>=1e6?String(x):nfmt(x)):String(x).trim())+(suf||'')};
+/* ---------- fotos ---------- */
+const IMG_CACHE={};
+function photoUrl(u){const m=S.base&&S.base.photos;return m?m[u.F]||null:null}
+function loadImg(src,max=1400,q=0.9){
+  if(!src)return Promise.resolve(null);const ck=src+'|'+max;
+  if(!IMG_CACHE[ck])IMG_CACHE[ck]=new Promise(res=>{const i=new Image();const to=setTimeout(()=>res(null),12000);i.onload=()=>{clearTimeout(to);try{const r=Math.min(1,max/Math.max(i.naturalWidth,i.naturalHeight));const c=document.createElement('canvas');c.width=Math.round(i.naturalWidth*r);c.height=Math.round(i.naturalHeight*r);const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(i,0,0,c.width,c.height);res({data:c.toDataURL('image/jpeg',q),fmt:'JPEG',w:c.width,h:c.height})}catch(e){res(null)}};i.onerror=()=>{clearTimeout(to);res(null)};i.src=src});
+  return IMG_CACHE[ck];
+}
+const pkey=x=>String(x||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function unitRole(u){const t=String(u.I||'').toLowerCase();return t.startsWith('cond')?'CONDENSADORA':t.startsWith('painel')?'PAINEL':t.startsWith('evap')?'EVAPORADORA':''}
+function unitImgSrc(k,u){
+  if(u===k.evap&&S.photos[k.id])return S.photos[k.id].data;
+  const P=S.unitPhotos||{};const own=P[pkey(u.F)];if(own)return own;
+  const base=photoUrl(u);if(base)return base;
+  const ln=pkey(lineOf(u));if(ln){const r=unitRole(u);return P[ln+r]||((r===''||r==='EVAPORADORA')?P[ln]:null)||null}
+  return null}
+const roleOf=(k,u)=>u===k.evap?(k.cond?'Evaporadora':'Unidade'):u===k.cond?'Condensadora':'Painel';
+
+/* ---------- funções ---------- */
+const FEATURES=[
+ ['BK','Wi-Fi','Controle pelo celular, de qualquer lugar.'],
+ ['DE|CI','Resfriamento rápido','Leva o ambiente à temperatura desejada em menos tempo.'],
+ ['CS','Sleep','Ajusta a temperatura aos poucos durante a noite.'],
+ ['CD','Timer','Programa o horário para ligar e desligar.'],
+ ['CE','Swing','Aletas oscilam e distribuem o ar pelo ambiente.'],
+ ['CR','Modo Dry','Retira a umidade do ar sem resfriar demais.'],
+ ['DH','I Feel','Mede a temperatura no controle, perto de quem está no ambiente.'],
+ ['DI','Modo Smart','Escolhe o modo de operação conforme a temperatura ambiente.'],
+ ['DJ','Modo silencioso','Reduz o ruído da evaporadora.'],
+ ['CH','Economia de energia','Limita a potência para gastar menos.'],
+ ['CT|DF','Limpeza da evaporadora','Limpa a evaporadora automaticamente, ajuda a evitar mofo e mantém a eficiência do produto.'],
+ ['CG','Ionizador','Libera íons que ajudam a purificar o ar.'],
+ ['DD','Air Fresh','Função para manter o ar mais limpo.'],
+ ['CK','Proteção anticorrosão','Mais durabilidade no litoral e em ambientes agressivos.'],
+ ['Q','Detecção de vazamento de gás','Avisa quando há perda de gás refrigerante.'],
+ ['DK','Auto Restart','Volta a funcionar com a última configuração após queda de energia.'],
+ ['DL','Autodiagnóstico','Mostra códigos de erro e agiliza a assistência técnica.'],
+ ['BR','Display com dimmer','Permite reduzir ou apagar a luz do display.'],
+];
+const featOn=(u,c)=>c.split('|').some(x=>sn(u[x])==='Sim');
+// Regras do Produto por família: funções a incluir/retirar
+const EXTRA_FEATURES={'Controle por voz':'Compatível com assistentes de voz.','Hi-Nano':'Íons duplos ajudam a purificar o ar, reduzindo partículas.'};
+const FEAT_RULES=[
+ {match:k=>['Cassete','Piso e Teto'].includes(k.group),add:['Controle por voz'],remove:['Sleep','Swing','I Feel','Modo Smart','Modo Dry']},
+ {match:k=>k.line==='Hi-Efficiency',add:['Hi-Nano','Controle por voz'],remove:['Modo Dry','Economia de energia']},
+ {match:k=>k.evap.F==='AW-07CMBRUGU00',add:[],remove:['Modo silencioso','Timer','Sleep','Modo Dry','Economia de energia']},
+];
+// Diferenciais definidos pelo Produto (substituem os automáticos)
+const FAMILY_KSP={'Janela Essential':[{t:'2 velocidades',d:'Ventilação baixa e alta.'},{t:'Design compacto',d:''},{t:'Filtro lavável',d:''},{t:'Fácil instalação',d:''},{t:'Controle simples e prático',d:'Comandos mecânicos no próprio aparelho.'}]};
+// Diferenciais extras para projeto e instalação
+const FAMILY_EXTRA={
+ 'Cassete 8 Vias Pro Efficiency':[
+  {t:'Amplo direcionamento do fluxo de ar – até 88°',d:'Aleta com abertura de até 88° amplia a área de direcionamento do ar.'},
+  {t:'Fácil manutenção e instalação simplificada',d:'Filtro de malha fina lavável e de remoção prática; grelha com encaixe em qualquer orientação.'},
+  {t:'Filtro Ag+ com íons de prata',d:'De série, com ação antibacteriana e antimofo (99,99% contra E. coli e S. aureus, segundo testes do fabricante).'},
+  {t:'Design compacto para instalação em forros',d:'Altura de 236 mm (24.000 BTU/h) e 272 mm (36.000 a 58.000 BTU/h).'},
+  {t:'Insuflamento por duto',d:'Saída preparada para duto leva o ar a áreas de difícil alcance.'}],
+ 'Piso e Teto Pro Efficiency':[
+  {t:'Design compacto',d:'Apenas 230 mm de espessura, com painel branco brilhante.'},
+  {t:'Amplo alcance do fluxo de ar – até 20 m',d:'Oscilação horizontal de até 90° e vertical de até 101°.'},
+  {t:'Instalação simplificada',d:'Ajustes de altura e caixa elétrica acessados pelos painéis laterais.'},
+  {t:'Instalação flexível',d:'Apoiado no piso, suspenso no teto ou inclinado; tubulação em 4 direções.'},
+  {t:'Ajuste de ventilação para pé-direito alto',d:'Velocidade ajustável pelo controle com fio para ambientes mais altos (padrão até 3 m).'},
+  {t:'Renovação do ar ambiente',d:'Entrada dedicada para conexão com sistema de captação de ar externo.'}]};
+const ipiPct=x=>{if(x===MISSING||x==null||x==='N/A'||isNA(x))return x;const n=Number(String(x).replace(',','.'));if(!isFinite(n))return x;const pc=n<=1?n*100:n;return `${nfmt(Math.round(pc*100)/100)}%`};
+function featuresOf(kits){
+  const base=FEATURES.map(([c,n,d])=>{const has=kits.filter(k=>featOn(k.evap,c)||(c==='CK'&&k.cond&&featOn(k.cond,c))).length;
+    if(!has)return null;let desc=d;if(c==='BK'){const a=kits.map(k=>k.evap.BL).find(x=>!isNA(x));if(a)desc=`Controle pelo celular com o app ${String(a).trim()}.`}
+    return {name:n,desc,partial:has<kits.length}}).filter(Boolean);
+  const k0=kits[0];if(!k0)return base;let out=base;
+  for(const r of FEAT_RULES)if(r.match(k0)){out=out.filter(f=>!r.remove.includes(f.name));for(const a of r.add)if(!out.some(f=>f.name===a)){
+    let d=EXTRA_FEATURES[a]||'';if(a==='Controle por voz'&&kits.some(k=>sn(k.evap.BM)==='Sim'||sn(k.evap.BN)==='Sim'))d='Compatível com Google Assistente e Alexa.';out.push({name:a,desc:d,partial:false})}}
+  return out;
+}
+// desenha funções em 2 colunas com check verde; devolve o novo y
+function drawFeatures(doc,y,feats,{W,M,newPage,green,ink,muted}){
+  const cw=(W-2*M-10)/2;
+  for(let i=0;i<feats.length;i+=2){
+    let rowH=0;const hs=[0,1].map(j=>{const f=feats[i+j];if(!f)return 0;doc.setFontSize(7.8);return 4+doc.splitTextToSize(f.desc+(f.partial?' (em alguns modelos)':''),cw-8).length*3.3});
+    rowH=Math.max(...hs);if(y+rowH>282)y=newPage();
+    for(let j=0;j<2;j++){const f=feats[i+j];if(!f)continue;const x=M+j*(cw+10);
+      doc.setFillColor(...green);doc.circle(x+2.2,y-1.2,2.2,'F');doc.setDrawColor(255,255,255);doc.setLineWidth(0.55);doc.line(x+1.2,y-1.2,x+2,y-0.3);doc.line(x+2,y-0.3,x+3.4,y-2.2);
+      doc.setTextColor(...ink);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(f.name,x+6.5,y);
+      doc.setFont('helvetica','normal');doc.setFontSize(7.8);doc.setTextColor(...muted);doc.text(doc.splitTextToSize(f.desc+(f.partial?' (em alguns modelos)':''),cw-8),x+6.5,y+3.8)}
+    y+=rowH+3.2}
+  return y;
+}
+
+/* ---------- diferenciais de venda ---------- */
+function autoKsp(k,all){
+  const E=k.evap,C=k.cond||k.evap;const out=[];const num=x=>{const n=Number(x);return isNA(x)||!isFinite(n)?null:n};
+  if(/inverter/i.test(E.J||''))out.push({t:'Tecnologia Inverter',d:!all&&num(E.R)&&num(E.T)?`O compressor ajusta a velocidade conforme a necessidade, de ${nfmt(E.R,0)} a ${nfmt(E.T,0)} BTU/h, e gasta menos energia.`:'O compressor ajusta a velocidade conforme a necessidade e gasta menos energia.'});
+  const L=String(E.AO||'').trim().toUpperCase();
+  if(all){const As=all.every(x=>String(x.evap.AO||'').trim().toUpperCase()==='A');const id=all.map(x=>num(x.evap.AU)).filter(x=>x!==null);
+    if(As)out.push({t:'Toda a linha com classificação A no Inmetro',d:id.length?(Math.min(...id)===Math.max(...id)?`IDRS de ${nfmt(id[0])}.`:`IDRS de ${nfmt(Math.min(...id))} a ${nfmt(Math.max(...id))}, conforme a capacidade.`):''})}
+  else if(L==='A')out.push({t:'Classificação A no Inmetro',d:[!isNA(E.AU)&&`IDRS de ${nfmt(E.AU)}`,!isNA(E.AV)&&`consumo de ${nfmt(E.AV)} kWh por ano`].filter(Boolean).join(' e ').replace(/^(.+)$/,'$1.')});
+  if(sn(E.BK)==='Sim'){const vz=[sn(E.BM)==='Sim'&&'Google Assistente',sn(E.BN)==='Sim'&&'Alexa'].filter(Boolean);out.push({t:'Wi-Fi integrado',d:`Controle pelo celular${isNA(E.BL)?'':' com o app '+String(E.BL).trim()}${vz.length?', compatível com '+vz.join(' e '):''}.`})}
+  if(!isNA(E.CO)&&/\d/.test(E.CO))out.push({t:'Garantia estendida do compressor',d:`${String(E.CO).trim()}.`});
+  if(sn(E.CK)==='Sim'||sn(C.CK)==='Sim')out.push({t:'Proteção anticorrosão',d:'Mais durabilidade em regiões litorâneas e ambientes agressivos.'});
+  if(/r-?32/i.test(E.K||''))out.push({t:'Gás R-32',d:'Refrigerante com menor potencial de aquecimento global que o R-410A.'});
+  if(sn(E.CT)==='Sim'||sn(E.DF)==='Sim')out.push({t:'Limpeza da evaporadora',d:'Limpa a evaporadora automaticamente, ajuda a evitar mofo e mantém a eficiência do produto.'});
+  if(sn(E.Q)==='Sim')out.push({t:'Detecção de vazamento de gás',d:'Avisa quando há perda de gás refrigerante.'});
+  if(k.group==='Cassete'&&/4\s*vias/i.test(E.G||''))out.push({t:'Distribuição de ar em 4 vias',d:'Insuflamento para os quatro lados, com cobertura uniforme do ambiente.'});
+  if(sn(E.CI)==='Sim'||sn(E.DE)==='Sim')out.push({t:'Resfriamento rápido',d:'Função Turbo leva o ambiente à temperatura desejada em menos tempo.'});
+  const r=num(E.BG);if(r!==null&&r<=30)out.push({t:'Operação silenciosa',d:`Evaporadora a partir de ${nfmt(r)} dB(A).`});
+  return out.slice(0,6);
+}
+// Lê a descrição longa: títulos em MAIÚSCULAS seguidos do parágrafo
+const KSP_TITLES={'economize energia sem abrir mão do conforto':'Mais eficiência e economia','sua casa na sua voz':'Controle por voz',
+  'controle seu ar-condicionado de qualquer lugar':'Wi-Fi – Controle seu ar-condicionado de qualquer lugar','durma melhor com apenas 19 db':'Super silencioso – 19 dB'};
+function kspFromText(txt){
+  if(isNA(txt))return [];const ls=String(txt).split(/\n+/).map(x=>x.trim()).filter(Boolean);const out=[];
+  const isHead=l=>{const letters=l.replace(/[^A-Za-zÀ-ÿ]/g,'');if(letters.length<5||l.length>90)return false;const up=letters.replace(/[^A-ZÀ-Þ]/g,'').length;return up/letters.length>0.75};
+  for(let i=0;i<ls.length;i++)if(isHead(ls[i])){const para=ls[i+1]&&!isHead(ls[i+1])?ls[i+1]:'';let d=(para.match(/^.*?[.!?](\s|$)/)||[para])[0].trim();if(d.length>190)d=d.slice(0,187).replace(/\s\S*$/,'')+'…';out.push({t:KSP_TITLES[norm(ls[i]).split(':')[0].trim()]||sentenceCase(ls[i]),d})}
+  return out;
+}
+const KEEP_UP=new Set(['INMETRO','HI-NANO','PCB','ECO','WI-FI','3D','HEPA','IDRS','BTU','BTUS','LED','PRO','UV','SAC','A','ON/OFF','FULL']);
+function sentenceCase(t){const w=t.split(/(\s+)/);let first=true;return w.map(x=>{if(/^\s+$/.test(x))return x;const core=x.replace(/[^A-Za-zÀ-ÿ0-9\-\/]/g,'');if(KEEP_UP.has(core.toUpperCase())&&core===core.toUpperCase()){first=false;return x}
+  if(/\d/.test(core)&&/db/i.test(core))return x.replace(/DB/,'dB');const lo=x.toLowerCase();const r=first?lo.charAt(0).toUpperCase()+lo.slice(1):lo;first=false;return r}).join('').replace(/\bdb\b/g,'dB').replace(/connectlife/gi,'ConnectLife').replace(/hisense/gi,'Hisense').replace(/inverter/gi,'Inverter').replace(/\balexa\b/gi,'Alexa').replace(/google/gi,'Google')}
+function hierFor(k){const H=S.hier||{};return H[`${k.line}|${k.ciclo}`]||H[`${k.line}|`]||null}
+function kspFor(k){const e=S.ksp[k.id];if(e&&e.length)return {items:e.slice(0,4),src:'editado'};if(k.line&&FAMILY_KSP[k.line])return {items:FAMILY_KSP[k.line],src:'produto'};const tk=isNA(k.evap.N)&&typeof famKits==='function'?(famKits(k).find(x=>!isNA(x.evap.N))||k):k;const t=kspFromText(tk.evap.N);if(t.length)return {items:t.slice(0,4),src:'texto'};return {items:autoKsp(k).slice(0,4),src:'auto'}}
+
+/* ---------- ficha técnica ---------- */
+async function drawFicha(doc,k){
+  const W=210,M=14;const teal=[0,128,123],ink=[15,37,38],muted=[91,111,112],soft=[233,240,240],line=[214,224,224];
+  const E=k.evap,C=k.cond;const clean=t=>String(t).replace(/³/g,'3').replace(/²/g,'2').replace(/[–—]/g,'-').replace(/≤/g,'<=').replace(/≥/g,'>=');
+  const first=doc.getNumberOfPages();const headed=new Set([first]);
+  const miniHeader=()=>{const pg=doc.getCurrentPageInfo().pageNumber;if(headed.has(pg))return;headed.add(pg);doc.setFillColor(...teal);doc.rect(0,0,W,10,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.text('Hisense  ·  Ficha técnica',M,6.4);doc.setFont('courier','normal');doc.text(k.units.map(u=>u.F).join(' + '),W-M,6.4,{align:'right'})};
+  const newPage=()=>{doc.addPage();miniHeader();return 18};
+  const heading=(t,y)=>{doc.setFillColor(...teal);doc.rect(M,y,W-2*M,6.4,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(t,M+2.5,y+4.4);return y+10};
+  // cabeçalho
+  doc.setFillColor(...teal);doc.rect(0,0,W,24,'F');
+  if(S.logo){try{const d=await loadImg(S.logo.data);const h=11,w=d?Math.min(60,h*d.w/d.h):30;doc.setFillColor(255,255,255);doc.roundedRect(M-2,5,w+4,h+3,1.5,1.5,'F');doc.addImage(d.data,'JPEG',M,6.5,w,h)}catch(e){}}
+  else{doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(20);doc.text('Hisense',M,15.5)}
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('FICHA TÉCNICA',W-M,11,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.text(k.group+' · '+k.ciclo,W-M,16,{align:'right'});
+  // título
+  let y=32;const green=[10,138,69];
+  doc.setTextColor(...(k.line?green:muted));doc.setFont('helvetica','bold');doc.setFontSize(k.line?13:9);doc.text(k.line?`Linha ${k.line}`:'Linha não informada',M,y);y+=6.5;
+  doc.setTextColor(...ink);doc.setFont('helvetica','bold');doc.setFontSize(15);
+  const tl=doc.splitTextToSize(clean(k.desc),W-2*M);doc.text(tl,M,y);y+=tl.length*6+1;
+  // fotos
+  const us=k.units;const gap=4;const pw=(W-2*M-gap*(us.length-1))/us.length;const ph=us.length===1?62:48;
+  for(let i=0;i<us.length;i++){const u=us[i];const x=M+i*(pw+gap);
+    doc.setDrawColor(...line);doc.setLineWidth(0.3);doc.setFillColor(255,255,255);doc.roundedRect(x,y,pw,ph,2,2,'FD');
+    const im=await loadImg(unitImgSrc(k,u));
+    if(im){const bw=pw-8,bh=ph-8;let w=bw,h=bw*im.h/im.w;if(h>bh){h=bh;w=bh*im.w/im.h}doc.addImage(im.data,'JPEG',x+(pw-w)/2,y+(ph-h)/2,w,h)}
+    else{doc.setTextColor(...muted);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text('Foto não cadastrada',x+pw/2,y+ph/2,{align:'center'})}
+    doc.setTextColor(...muted);doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.text(roleOf(k,u),x,y+ph+4.5);
+    doc.setTextColor(...ink);doc.setFont('courier','bold');doc.setFontSize(8);doc.text(u.F,x+pw,y+ph+4.5,{align:'right'});}
+  y+=ph+10;
+  // destaques
+  const hl=[[pv(E,'S'),'BTU/h nominal'],[String(E.AO||'—').trim(),'Classificação Inmetro'],[pv(E,'AU'),'IDRS (Wh/Wh)'],[pv(E,'J'),'Compressor'],[pv(E,'K'),'Gás refrigerante'],[sn(E.BK)==='Sim'?'Sim':'Não','Wi-Fi'+(isNA(E.BL)?'':' · '+String(E.BL).trim())]];
+  const bw=(W-2*M-5*3)/6;
+  hl.forEach(([big,small],i)=>{const x=M+i*(bw+3);doc.setFillColor(...soft);doc.roundedRect(x,y,bw,16,1.5,1.5,'F');doc.setTextColor(...ink);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(doc.splitTextToSize(clean(big),bw-4)[0],x+3,y+7);doc.setFont('helvetica','normal');doc.setFontSize(6.6);doc.setTextColor(...muted);doc.text(doc.splitTextToSize(clean(small),bw-4).slice(0,2),x+3,y+11.8)});
+  y+=22;
+  // diferenciais
+  const ksp=kspFor(k).items;
+  if(ksp.length){y=heading('Principais diferenciais',y);
+    const cw=(W-2*M-8)/2;
+    for(let i=0;i<ksp.length;i+=2){let rowH=0;
+      for(let j=0;j<2&&i+j<ksp.length;j++){const it=ksp[i+j];const x=M+j*(cw+8);
+        doc.setFillColor(...teal);doc.circle(x+1.4,y-1.1,1.1,'F');
+        doc.setTextColor(...ink);doc.setFont('helvetica','bold');doc.setFontSize(9);const tt=doc.splitTextToSize(clean(it.t),cw-5);doc.text(tt,x+5,y);
+        doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...muted);const dd=it.d?doc.splitTextToSize(clean(it.d),cw-5):[];doc.text(dd,x+5,y+tt.length*4);
+        rowH=Math.max(rowH,tt.length*4+dd.length*3.5)}
+      y+=rowH+4.5}
+    y+=1}
+  // sobre o produto
+  const about=!isNA(E.NC)?E.NC:E.N;
+  if(!isNA(about)&&y<262){y=heading('Sobre o produto',y);doc.setFont('helvetica','normal');doc.setFontSize(8.3);doc.setTextColor(...ink);
+    let tx=clean(String(about).replace(/\s+/g,' ').trim());const maxLines=Math.min(9,Math.max(2,Math.floor((282-y)/3.7)));
+    let lines=doc.splitTextToSize(tx,W-2*M);if(lines.length>maxLines){const keep=lines.slice(0,maxLines).join(' ');const cut=keep.lastIndexOf('. ');lines=doc.splitTextToSize(cut>80?keep.slice(0,cut+1):keep,W-2*M)}
+    doc.text(lines,M,y);}
+  // página de especificações
+  y=newPage();
+  const sect=(title,body,head,colStyles)=>{doc.autoTable({startY:y,head:head||[[{content:title,colSpan:2}]],body:body.map(r=>r.map(clean)),theme:'plain',margin:{left:M,right:M,top:16},
+    styles:{font:'helvetica',fontSize:8.3,cellPadding:{top:1.5,bottom:1.5,left:2.5,right:2.5},textColor:ink,lineColor:line,lineWidth:{bottom:0.2}},
+    headStyles:{fillColor:teal,textColor:[255,255,255],fontStyle:'bold',fontSize:8.8},columnStyles:colStyles||{0:{cellWidth:68,textColor:muted}},
+    didDrawPage:()=>miniHeader()});y=doc.lastAutoTable.finalY+5};
+  sect('Desempenho',[
+    ['Capacidade mín / nom / máx (BTU/h)',[pv(E,'R'),pv(E,'S'),pv(E,'T')].join(' / ')],['Capacidade de refrigeração (W)',pv(E,'V')],['Capacidade (kcal/h)',pv(E,'X')],
+    ['Ciclo',k.ciclo],['Capacidade de aquecimento (BTU/h)',k.ciclo==='Frio'?'Não possui':pv(E,'U')],
+    ['Eficiência EER (W/W)',pv(E,'AT')],['IDRS (Wh/Wh)',pv(E,'AU')],['Consumo de energia (kWh/ano)',pv(E,'AV')],
+    ['Vazão de ar',pv(E,'AZ')],['Área indicada',pv(E,'BA')],['Faixa de temperatura',pv(E,'BU')]]);
+  sect('Elétrica',[
+    ['Tensão',isNA(E.AP)?'—':`${String(E.AP).replace(/v$/i,'')} V`],['Frequência',pv(E,'AQ')],['Fases',pv(E,'AR')],
+    ['Potência consumida (W)',pv(E,'AS')],['Corrente de refrigeração (A)',pv(E,'AW')],['Corrente nominal (A)',pv(E,'AY')]]);
+  const head=[['Unidades',...us.map(u=>roleOf(k,u))]];
+  const dim=(u,a,b,c)=>[a,b,c].every(x=>u&&!isNA(u[x]))?`${u[a]} x ${u[b]} x ${u[c]}`:'—';
+  sect('',[
+    ['Modelo',...us.map(u=>u.F)],['EAN',...us.map(u=>pv(u,'AA'))],['NCM',...us.map(u=>isNA(u.Z)?'—':ncm(u.Z))],
+    ['Dimensões L x A x P (mm)',...us.map(u=>dim(u,'AG','AH','AI'))],['Dimensões com embalagem (mm)',...us.map(u=>dim(u,'AJ','AK','AL'))],
+    ['Peso líquido / bruto (kg)',...us.map(u=>`${pv(u,'AE')} / ${pv(u,'AF')}`)],['Empilhamento máximo',...us.map(u=>pv(u,'AM'))],
+    ['Ruído dB(A)',...us.map(u=>u===E?pv(u,'BG'):u===C?pv(u,'BH'):'—')],['Cor',...us.map(u=>pv(u,'BF'))],
+    ['Registro Inmetro',...us.map(u=>pv(u,'AD'))]],head,{0:{cellWidth:52,textColor:muted}});
+  // funções
+  const feats=featuresOf([k]);
+  if(feats.length){if(y>245)y=newPage();y=heading('Funções e recursos',y)+2;y=drawFeatures(doc,y,feats,{W,M,newPage,green:[10,138,69],ink,muted})+3}
+  // instalação
+  if(y>200)y=newPage();
+  const alim=/odu/i.test(E.AN||'')?'Pela condensadora':/idu/i.test(E.AN||'')?'Pela evaporadora':pv(E,'AN');
+  sect('Instalação',[
+    ['Linha de líquido (mm / pol)',pv(E,'CW')],['Linha de gás / sucção (mm / pol)',pv(E,'CX')],
+    ['Distância máxima entre unidades (m)',pv(E,'CZ')],['Desnível máximo entre unidades (m)',pv(E,'CY')],
+    ['Carga de gás de fábrica (kg)',pv(C||E,'P')],['Gás refrigerante',pv(E,'K')],['Dispositivo de expansão',pv(E,'DA')],
+    ['Alimentação elétrica',alim],['Tensão / fases',`${isNA(E.AP)?'—':String(E.AP).replace(/v$/i,'')+' V'} / ${pv(E,'AR')}`],
+    ['Corrente nominal (A)',pv(E,'AY')],['Ligação elétrica',[...new Set([pv(E,'BB'),pv(E,'BD')].filter(x=>x&&x!=='—').map(x=>x.trim()))].join(' · ')||'—'],
+    ['Comprimento do cabo de alimentação (m)',pv(E,'BE')],['Material da serpentina',pv(E,'BI')],['Tipo de condensadora',pv(C||E,'BJ')],
+    ['Peso da condensadora (kg)',C?pv(C,'AE'):'—'],['Garantia especial',pv(E,'CQ')]]);
+  if(y>250)y=newPage();
+  sect('Garantia e atendimento',[['Garantia do produto',pv(E,'CN')],['Garantia do compressor',pv(E,'CO')],['Conteúdo da embalagem',pv(E,'DP')],['SAC',pv(E,'DO').replace(/\n/g,'  ·  ')]]);
+}
+function footers(doc,ranges){
+  const today=new Date().toLocaleDateString('pt-BR');
+  for(const[label,a,z]of ranges)for(let i=a;i<=z;i++){doc.setPage(i);const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(91,111,112);
+    doc.text(`Informações sujeitas a alteração sem aviso prévio. Gerado em ${today}.`,14,H-7);doc.text(`${label}  ·  ${i-a+1}/${z-a+1}`,W-14,H-7,{align:'right'})}
+}
+/* ---------- mini catálogo por linha ---------- */
+const famKeyOf=k=>k.lineKey+'|'+k.ciclo;
+const famKits=k=>S.kits.filter(x=>famKeyOf(x)===famKeyOf(k));
+const famTitle=k=>k.line||k.group;
+const GROUP_LABEL={'Split Hi-Wall':'Split Hi-Wall Inverter','Multi Split':'Multi Split Inverter','Cassete':'Cassete Inverter','Piso e Teto':'Piso e Teto Inverter','Janela':'Janela','Portátil':'Portátil'};
+const DEFAULT_HEADS={[pkey('Split Hi-Wall Frio')]:'img/head-split-hi-wall-frio.jpg'};
+const DEFAULT_HEROES={[pkey('Eco Plus II')]:'img/hero-eco-plus-ii.jpg',[pkey('Split Hi-Wall Frio')]:'img/hero-split-hi-wall-frio.jpg',[pkey('Cassete')]:'img/hero-cassete.jpg',
+  [pkey('Janela Smart')]:'img/hero-janela-smart.jpg',[pkey('Portátil Smart')]:'img/hero-portatil-smart.jpg',[pkey('Piso e Teto')]:'img/hero-piso-e-teto.jpg',
+  [pkey('Janela Inverter Expert')]:'img/hero-janela-inverter-expert.jpg',[pkey('Janela Essential')]:'img/hero-janela-essential.jpg',[pkey('Portátil Essential')]:'img/hero-portatil-essential.jpg',
+  [pkey('Hi-Multi')]:'img/hero-hi-multi.jpg',[pkey('Split Hi-Wall Quente e Frio')]:'img/hero-split-hi-wall-quente-e-frio.jpg',[pkey('AW-12CR2RWGU00')]:'img/hero-aw-12cr2rwgu00.jpg'};
+function famImgKeys(k){const fk=famKits(k);return [fk.length===1?k.evap.F:null,k.line?`${k.line} ${k.ciclo}`:null,k.line,`${k.group} ${k.ciclo}`,k.group].filter(Boolean).map(pkey)}
+function headFor(k){for(const x of famImgKeys(k)){const u=(S.heads||{})[x]||DEFAULT_HEADS[x];if(u)return u}return null}
+function heroFor(k){for(const x of famImgKeys(k)){const u=(S.heroes||{})[x]||DEFAULT_HEROES[x];if(u)return u}return null}
+// unidades de vitrine da família: evaporadora e condensadora (Multi Split: primeira de cada)
+function showUnits(kits){const k0=kits[0];if(k0.multiRole){const e=kits.find(k=>k.multiRole==='Evaporadora'),c=kits.find(k=>k.multiRole==='Condensadora');return [e&&{k:e,u:e.evap,role:'Evaporadora'},c&&{k:c,u:c.evap,role:'Condensadora'}].filter(Boolean)}
+  return k0.units.filter(u=>u!==k0.panel||unitImgSrc(k0,u)).map(u=>({k:k0,u,role:roleOf(k0,u)}))}
+
+/* ---------- atributos da ficha (vendas e instaladores) ---------- */
+const EVU=k=>k.multiRole==='Condensadora'?null:k.evap, CDU=k=>k.multiRole==='Condensadora'?k.evap:k.cond, MU=k=>k.evap;
+const pvx=(u,c)=>u?pv(u,c):'—';
+const dimx=(u,a,b,c)=>u&&[a,b,c].every(x=>!isNA(u[x]))?`${u[a]} x ${u[b]} x ${u[c]}`:'—';
+const voltx=u=>!u||isNA(u.AP)?'—':String(u.AP).replace(/v$/i,'')+' V';
+const alimx=u=>/odu/i.test(u.AN||'')?'Pela condensadora':/idu/i.test(u.AN||'')?'Pela evaporadora':pv(u,'AN');
+// [seção, rótulo, função(k)] — se o valor é igual em toda a família vai para "Características gerais"; se varia, vai para a tabela por capacidade
+const SPEC=[
+ ['Modelos','Evaporadora',k=>EVU(k)?EVU(k).F:'—'],['Modelos','Condensadora',k=>CDU(k)?CDU(k).F:'—'],['Modelos','Painel',k=>k.panel?k.panel.F:'—'],
+ ['Modelos','EAN evaporadora',k=>pvx(EVU(k),'AA')],['Modelos','EAN condensadora',k=>pvx(CDU(k),'AA')],['Modelos','EAN painel',k=>pvx(k.panel,'AA')],
+ ['Desempenho','Capacidade nominal (BTU/h)',k=>pv(MU(k),'S')],['Desempenho','Capacidade máxima (BTU/h)',k=>pv(MU(k),'T')],['Desempenho','Capacidade de refrigeração (W)',k=>pv(MU(k),'V')],
+ ['Desempenho','Capacidade de aquecimento (BTU/h)',k=>k.ciclo==='Frio'?'—':pv(MU(k),'U')],['Desempenho','Frigorias (kcal/h)',k=>pv(MU(k),'X')],
+ ['Desempenho','Ciclo',k=>k.ciclo],['Desempenho','Tipo de conexão',k=>k.group==='Multi Split'?'Freematch (2 a 5 evaporadoras)':'—'],['Desempenho','Classificação Inmetro',k=>pv(MU(k),'AO')],['Desempenho','Selo Procel',k=>procelOf(k)],['Desempenho','IDRS (Wh/Wh)',k=>pv(MU(k),'AU')],['Desempenho','Consumo de energia (kWh/ano)',k=>pv(MU(k),'AV')],
+ ['Desempenho','Vazão de ar',k=>pv(MU(k),'AZ')],['Desempenho','Área indicada',k=>pv(MU(k),'BA')],['Desempenho','Faixa de temperatura',k=>pv(MU(k),'BU')],
+ ['Desempenho','Compressor',k=>pv(MU(k),'J')],['Desempenho','Gás refrigerante',k=>pv(MU(k),'K')],['Desempenho','Detecção de vazamento de gás',k=>pv(MU(k),'Q')],
+ ['Elétrica','Tensão',k=>voltx(MU(k))],['Elétrica','Frequência',k=>pv(MU(k),'AQ')],['Elétrica','Fases',k=>pv(MU(k),'AR')],
+ ['Elétrica','Potência elétrica consumida (W)',k=>pv(MU(k),'AS')],['Elétrica','Corrente de refrigeração (A)',k=>pv(MU(k),'AW')],['Elétrica','Corrente de aquecimento (A)',k=>k.ciclo==='Frio'?'—':pv(MU(k),'AX')],
+ ['Elétrica','Corrente nominal (A)',k=>pv(MU(k),'AY')],['Elétrica','Alimentação elétrica',k=>alimx(MU(k))],['Elétrica','Capacidade do plugue',k=>pv(MU(k),'BB')],
+ ['Elétrica','Tipo de plugue',k=>pv(MU(k),'BD')],['Elétrica','Cabo de alimentação',k=>pv(MU(k),'BE')],['Elétrica','Religamento após queda de energia',k=>pv(MU(k),'DN')],
+ ['Instalação','Linha de líquido',k=>pv(MU(k),'CW')],['Instalação','Linha de gás (sucção)',k=>pv(MU(k),'CX')],['Instalação','Distância máxima (m)',k=>pv(MU(k),'CZ')],
+ ['Instalação','Desnível máximo (m)',k=>pv(MU(k),'CY')],['Instalação','Carga de gás de fábrica (kg)',k=>pvx(CDU(k)||MU(k),'P')],['Instalação','Dispositivo de expansão',k=>pv(MU(k),'DA')],
+ ['Instalação','Tipo de condensadora',k=>['Janela','Portátil'].includes(k.group)||!CDU(k)?'—':k.line==='Eco Plus II'?'Vertical':'Horizontal'],['Instalação','Design sem drenagem',k=>pv(MU(k),'BT')],
+ ['Evaporadora','Dimensões L x A x P (mm)',k=>dimx(EVU(k),'AG','AH','AI')],['Evaporadora','Embalagem L x A x P (mm)',k=>dimx(EVU(k),'AJ','AK','AL')],
+ ['Evaporadora','Peso líquido / bruto (kg)',k=>EVU(k)?`${pv(EVU(k),'AE')} / ${pv(EVU(k),'AF')}`:'—'],['Evaporadora','Ruído (dB(A))',k=>pvx(EVU(k),'BG')],
+ ['Evaporadora','Empilhamento máximo',k=>pvx(EVU(k),'AM')],['Evaporadora','Material',k=>EVU(k)&&!['Janela','Portátil'].includes(k.group)?'Plástico':pvx(EVU(k),'DB')],['Evaporadora','Serpentina',k=>pvx(EVU(k),'BI')],
+ ['Condensadora','Dimensões L x A x P (mm)',k=>dimx(CDU(k),'AG','AH','AI')],['Condensadora','Embalagem L x A x P (mm)',k=>dimx(CDU(k),'AJ','AK','AL')],
+ ['Condensadora','Peso líquido / bruto (kg)',k=>CDU(k)?`${pv(CDU(k),'AE')} / ${pv(CDU(k),'AF')}`:'—'],['Condensadora','Ruído (dB(A))',k=>pvx(CDU(k),'BH')],
+ ['Condensadora','Empilhamento máximo',k=>pvx(CDU(k),'AM')],['Condensadora','Material',k=>pvx(CDU(k),'DC')],
+ ['Painel','Dimensões L x A x P (mm)',k=>dimx(k.panel,'AG','AH','AI')],['Painel','Peso líquido / bruto (kg)',k=>k.panel?`${pv(k.panel,'AE')} / ${pv(k.panel,'AF')}`:'—'],
+ ['Conforto e controle','Modos de operação',k=>pv(MU(k),'CF')],['Conforto e controle','Velocidades',k=>pv(MU(k),'BV')],['Conforto e controle','Sistema de ventilação',k=>pv(MU(k),'BW')],
+ ['Conforto e controle','Modo dormir',k=>pv(MU(k),'CS')],['Conforto e controle','Oscilação (swing)',k=>pv(MU(k),'CE')],
+ ['Conforto e controle','Direcionador horizontal',k=>pv(MU(k),'CL')],['Conforto e controle','Direcionador vertical',k=>pv(MU(k),'CM')],
+ ['Conforto e controle','Display',k=>pv(MU(k),'BS')],['Conforto e controle','Painel removível e lavável',k=>pv(MU(k),'BQ')],
+ ['Conforto e controle','Filtro',k=>pv(MU(k),'CA')],['Conforto e controle','Filtro HEPA',k=>pv(MU(k),'CB')],['Conforto e controle','Acesso ao filtro',k=>pv(MU(k),'CC')],
+ ['Conforto e controle','Controle remoto',k=>pv(MU(k),'BX')],['Conforto e controle','Botões do controle',k=>pv(MU(k),'BY')],['Conforto e controle','Pilhas (não inclusas)',k=>pv(MU(k),'BZ')],
+ ['Conforto e controle','Wi-Fi',k=>pv(MU(k),'BK')],['Conforto e controle','Aplicativo',k=>pv(MU(k),'BL')],['Conforto e controle','Google Assistente',k=>pv(MU(k),'BM')],['Conforto e controle','Alexa',k=>pv(MU(k),'BN')],
+ ['Conforto e controle','Rodízios 360°',k=>pv(MU(k),'DM')],
+ ['Fiscal e logística','NCM',k=>isNA(MU(k).Z)?'—':ncm(MU(k).Z)],['Fiscal e logística','CEST',k=>pv(MU(k),'Y')],['Fiscal e logística','IPI',k=>{const x=ipiPct(MU(k).AC);return x==null||isNA(x)?'—':String(x)}],
+ ['Fiscal e logística','Origem',k=>{const o=pv(MU(k),'L');return o.split(/,| - /)[0].trim()}],['Fiscal e logística','Fabricação',k=>pv(MU(k),'M')],
+ ['Fiscal e logística','Homologação Anatel',k=>pv(MU(k),'BO')],['Fiscal e logística','Cor',k=>pv(MU(k),'BF')],
+ ['Garantia e atendimento','Garantia do produto',k=>pv(MU(k),'CN')],['Garantia e atendimento','Garantia do compressor',k=>pv(MU(k),'CO')],
+ ['Garantia e atendimento','Conteúdo da embalagem',k=>pv(MU(k),'DP')],['Garantia e atendimento','SAC',k=>pv(MU(k),'DO').replace(/\n/g,' · ')],
+];
+const HIDE_IF_NO=new Set(['Modo dormir','Controle remoto','Botões do controle','Pilhas (não inclusas)','Display','Wi-Fi','Aplicativo','Google Assistente','Alexa','Filtro HEPA','Painel removível e lavável','Rodízios 360°','Detecção de vazamento de gás']);
+function splitSpec(kits){
+  const gen=[],vary=[];const multi=!!(kits[0]&&kits[0].multiRole);
+  for(const[sec,lab0,fn]of SPEC){const lab=multi&&lab0==='Classificação Inmetro'?'Classificação':lab0;
+    const noRemote=k=>sn(MU(k).BX)==='Não'&&['Botões do controle','Pilhas (não inclusas)'].includes(lab0);
+    const vals=kits.map(k=>{try{let x=String(fn(k)).trim();if(noRemote(k))x='—';if(HIDE_IF_NO.has(lab0)&&/^n[ãa]o\b/i.test(x))x='—';return x}catch(e){return '—'}});
+    if(vals.every(x=>x==='—'||x===''||x==='— / —'))continue;
+    if(lab0==='Selo Procel'&&vals.every(x=>x==='Não'))continue;
+    const perModel=sec==='Instalação'||lab0==='Classificação Inmetro'||lab0==='Selo Procel'||lab==='Ciclo';
+    if(!perModel&&vals.every(x=>x===vals[0]))gen.push([sec,lab,vals[0]]);else vary.push([sec,lab,vals])}
+  return {gen,vary};
+}
+
+async function drawFamilyFicha(doc,kits){
+  const teal=[0,128,123],ink=[15,37,38],muted=[91,111,112],soft=[233,240,240],line=[214,224,224],green=[10,138,69];
+  const clean=t=>String(t).replace(/³/g,'3').replace(/²/g,'2').replace(/[–—]/g,'-').replace(/≥/g,'>=').replace(/≤/g,'<=');
+  let W=210;const M=12;const k0=kits[0];const tk=kits.find(k=>!isNA(k.evap.NC)||!isNA(k.evap.N))||k0;const E=tk.evap;const title=famTitle(k0);
+  const headed=new Set([doc.getNumberOfPages()]);
+  const miniHeader=()=>{const pg=doc.getCurrentPageInfo().pageNumber;if(headed.has(pg))return;headed.add(pg);const w=doc.internal.pageSize.getWidth();doc.setFillColor(...teal);doc.rect(0,0,w,9,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.text('Hisense  ·  Ficha técnica',M,5.9);doc.text(clean(`${title} · ${k0.ciclo}`),w-M,5.9,{align:'right'})};
+  const newPage=(o)=>{doc.addPage('a4',o||'portrait');W=o==='landscape'?297:210;miniHeader();return 15};
+  const heading=(t,y)=>{doc.setFillColor(...teal);doc.rect(M,y,W-2*M,5.6,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(8.6);doc.text(t,M+2,y+3.9);return y+9};
+  // topo: imagem da família (largura toda) > cabeçalho + fotos das unidades > faixa padrão
+  let y;const hero=await loadImg(heroFor(k0),2400,0.93);
+  if(hero){const hh=W*hero.h/hero.w;doc.addImage(hero.data,'JPEG',0,0,W,hh);y=hh+6.5}
+  else{const head=await loadImg(headFor(k0),2400,0.93);
+    if(head){const hh=W*head.h/head.w;doc.addImage(head.data,'JPEG',0,0,W,hh);y=hh+6}
+    else{doc.setFillColor(...teal);doc.rect(0,0,W,20,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('Hisense',M,13);
+      doc.setFontSize(10);doc.text('FICHA TÉCNICA',W-M,9.5,{align:'right'});doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text(clean(`${k0.group} · ${k0.ciclo}`),W-M,14.5,{align:'right'});y=26}}
+  // título
+  doc.setTextColor(...muted);doc.setFont('helvetica','bold');doc.setFontSize(7.8);doc.text(clean(`${(GROUP_LABEL[k0.group]||k0.group).toUpperCase()}  ·  ${k0.ciclo.toUpperCase()}`),M,y);y+=7;
+  doc.setTextColor(...(k0.line?green:ink));doc.setFont('helvetica','bold');doc.setFontSize(20);doc.text(clean(title),M,y);
+  const isMulti=!!k0.multiRole;
+  const caps=[...new Set(kits.filter(k=>!isMulti||k.multiRole==='Condensadora').map(k=>k.btu))].sort((a,b)=>a-b);
+  // pílulas de capacidade na mesma linha do título, à direita
+  doc.setFontSize(7.8);let pw=caps.map(c=>doc.getTextWidth(`${nfmt(c)} BTUs`)+6);let px=W-M-pw.reduce((a,b)=>a+b+2,-2);
+  const titleW=(()=>{doc.setFontSize(20);return doc.getTextWidth(clean(title))})();doc.setFontSize(7.8);
+  if(px<M+titleW+6){y+=6;px=M}
+  for(let i=0;i<caps.length;i++){if(px+pw[i]>W-M){px=M;y+=7}doc.setFillColor(...green);doc.roundedRect(px,y-4.2,pw[i],5.8,2.9,2.9,'F');doc.setTextColor(255,255,255);doc.text(`${nfmt(caps[i])} BTUs`,px+3,y);px+=pw[i]+2}
+  y+=5.5;doc.setTextColor(...muted);doc.setFont('helvetica','normal');doc.setFontSize(8.5);
+  const ao=pv(E,'AO');doc.text(clean(`${kits.length} modelo(s)${k0.group==='Multi Split'?'  ·  Conexão Freematch':''}  ·  ${pv(E,'J')}  ·  ${pv(E,'K')}${/^[A-G]$/.test(ao)?(isMulti?'  ·  Classificação ':'  ·  Inmetro ')+ao:''}${sn(E.BK)==='Sim'?'  ·  Wi-Fi '+pv(E,'BL'):''}`),M,y);y+=5;
+  // sem imagem de família: fotos das unidades lado a lado
+  if(!hero){const su=showUnits(kits);const ims=[];for(const x of su)ims.push(await loadImg(unitImgSrc(x.k,x.u)));
+    const valid=su.map((x,i)=>({...x,im:ims[i]})).filter(x=>x.im);
+    if(valid.length){const IH=48,gap=8,tw=W-2*M;const wts=valid.map(x=>x.role==='Condensadora'?0.8:1.25);const tot=wts.reduce((a,b)=>a+b,0);let x=M;
+      for(let i=0;i<valid.length;i++){const cw=(tw-gap*(valid.length-1))*wts[i]/tot;const im=valid[i].im;let w=cw,h=cw*im.h/im.w;if(h>IH){h=IH;w=IH*im.w/im.h}
+        doc.addImage(im.data,'JPEG',x+(cw-w)/2,y+(IH-h),w,h);doc.setTextColor(...muted);doc.setFontSize(7);doc.text(valid[i].role,x+cw/2,y+IH+3.5,{align:'center'});x+=cw+gap}
+      y+=IH+6}}
+  // diferenciais (4, ou a lista definida pelo Produto) + extras de projeto e instalação
+  const kfam=kspFor(tk);const blocks=[['Principais diferenciais',kfam.src==='produto'?kfam.items:kfam.items.slice(0,4)]];
+  if(k0.line&&FAMILY_EXTRA[k0.line])blocks.push(['Diferenciais para projeto e instalação',FAMILY_EXTRA[k0.line]]);
+  for(const[btitle,ksp]of blocks)
+  if(ksp.length){if(y>255)y=newPage();y=heading(btitle,y);const cw=(W-2*M-8)/2;
+    for(let i=0;i<ksp.length;i+=2){let rowH=0;
+      for(let j=0;j<2&&i+j<ksp.length;j++){const it=ksp[i+j];const xx=M+j*(cw+8);doc.setFillColor(...teal);doc.circle(xx+1.2,y-1,1,'F');
+        doc.setTextColor(...ink);doc.setFont('helvetica','bold');doc.setFontSize(8.6);const tt=doc.splitTextToSize(clean(it.t),cw-4);doc.text(tt,xx+4,y);
+        doc.setFont('helvetica','normal');doc.setFontSize(7.8);doc.setTextColor(...muted);const dd=it.d?doc.splitTextToSize(clean(it.d),cw-4):[];doc.text(dd,xx+4,y+tt.length*3.6);rowH=Math.max(rowH,tt.length*3.6+dd.length*3.3)}
+      y+=rowH+2.5}}
+  // sobre o produto
+  const about=!isNA(E.NC)?E.NC:null;
+  if(about){doc.setFont('helvetica','normal');doc.setFontSize(8.2);const t=doc.splitTextToSize(clean(String(about).replace(/\s*\n\s*/g,'\n').trim()),W-2*M);if(y+7+t.length*3.5>284)y=newPage();y=heading('Sobre o produto',y);doc.setFont('helvetica','normal');doc.setFontSize(8.2);doc.setTextColor(...ink);doc.text(t,M,y);y+=t.length*3.5+3}
+  // funções
+  const feats=featuresOf(kits);
+  if(feats.length){if(y>250)y=newPage();y=heading('Funções e recursos',y)+1.5;y=drawFeatures(doc,y,feats,{W,M,newPage,green,ink,muted})}
+  // características gerais (iguais em toda a família): 2 pares por linha
+  const {gen,vary}=splitSpec(kits);
+  if(gen.length){if(y>255)y=newPage();
+    const rows=[];const secs=[...new Set(gen.map(g=>g[0]))];
+    for(const sec of secs){const it=gen.filter(g=>g[0]===sec);rows.push([{content:sec,colSpan:4,styles:{fontStyle:'bold',textColor:teal,fillColor:[246,250,250]}}]);
+      for(let i=0;i<it.length;i+=2)rows.push([it[i][1],it[i][2],it[i+1]?it[i+1][1]:'',it[i+1]?it[i+1][2]:''])}
+    doc.autoTable({startY:y,head:[[{content:'Características gerais da família',colSpan:4}]],body:rows.map(r=>r.map(c=>typeof c==='string'?clean(c):c)),theme:'plain',margin:{left:M,right:M,top:14},
+      styles:{font:'helvetica',fontSize:7.3,cellPadding:{top:1,bottom:1,left:1.6,right:1.6},textColor:ink,lineColor:line,lineWidth:{bottom:0.15},valign:'top'},
+      headStyles:{fillColor:teal,textColor:[255,255,255],fontStyle:'bold',fontSize:8.6},
+      columnStyles:{0:{cellWidth:36,textColor:muted},1:{cellWidth:(W-2*M)/2-36},2:{cellWidth:36,textColor:muted},3:{cellWidth:'auto'}},
+      didDrawPage:()=>miniHeader()});y=doc.lastAutoTable.finalY+4}
+  // especificações por capacidade; no Multi Split, uma tabela para condensadoras e outra para evaporadoras
+  const tables=isMulti?[['Condensadoras (unidade externa) · especificações por capacidade',kits.filter(k=>k.multiRole==='Condensadora')],['Evaporadoras (unidade interna) · especificações por capacidade',kits.filter(k=>k.multiRole==='Evaporadora')]]:[['Especificações por capacidade',kits]];
+  let firstTbl=true;
+  for(const[ttitle,tk2]of tables){if(!tk2.length||!vary.length)continue;
+    const rows=vary.map(v=>[v[0],v[1],tk2.map(k=>v[2][kits.indexOf(k)])]).filter(v=>!v[2].every(x=>x==='—'||x===''||x==='— / —'));
+    if(!rows.length)continue;
+    const wide=tk2.length>5;if(wide)y=newPage('landscape');else if(y>215||(!firstTbl&&y>150))y=newPage();firstTbl=false;
+    const capL=k=>nfmt(k.btu);
+    const head=[[{content:ttitle,colSpan:tk2.length+1}],['',...tk2.map(k=>capL(k)+' BTUs')]];
+    const body=[];for(const sec of [...new Set(rows.map(v=>v[0]))]){body.push([{content:sec,colSpan:tk2.length+1,styles:{fontStyle:'bold',textColor:teal,fillColor:[246,250,250]}}]);
+      for(const v of rows.filter(v=>v[0]===sec))body.push([v[1],...v[2]])}
+    const kits_=tk2;
+    const fs=kits_.length>8?6.3:kits_.length>6?6.8:7.2;
+    doc.autoTable({startY:y,head,body:body.map(r=>r.map(c=>typeof c==='string'?clean(c):c)),theme:'plain',margin:{left:M,right:M,top:14},
+      styles:{font:'helvetica',fontSize:fs,cellPadding:{top:0.9,bottom:0.9,left:1.3,right:1.3},textColor:ink,lineColor:line,lineWidth:{bottom:0.15},valign:'middle'},
+      headStyles:{fillColor:soft,textColor:ink,fontStyle:'bold',fontSize:fs+0.4},columnStyles:{0:{cellWidth:wide?46:52,textColor:muted}},
+      didParseCell:d=>{if(d.section==='head'&&d.row.index===0){d.cell.styles.fillColor=teal;d.cell.styles.textColor=[255,255,255];d.cell.styles.fontSize=8.6}},
+      didDrawPage:()=>miniHeader()});y=doc.lastAutoTable.finalY+5}
+}
+/* ===================== ficha genérica Hisense ===================== */
+// [nível, rótulo, colunas da base, função, explicação]  nível: k = conjunto (aba Produtos) · u = unidade (aba Unidades)
+const GEN_DEF=[
+ ['k','Família',['O'],k=>k.lineName,'Linha comercial do produto.'],
+ ['k','Tipo de produto',['C'],k=>GROUP_LABEL[k.group]||k.group,'Split Hi-Wall, Multi Split, Cassete, Piso e Teto, Janela ou Portátil.'],
+ ['k','Ciclo',['D'],k=>k.ciclo,'Só frio, ou quente e frio.'],
+ ['k','Tipo de conexão',[],k=>k.group==='Multi Split'?'Freematch':'—','Multi Split: forma de ligar as evaporadoras à condensadora.'],
+ ['k','Descrição comercial',['E'],k=>k.desc,'Nome do produto para o cadastro.'],
+ ['k','Modelo da evaporadora',['F'],k=>EVU(k)?EVU(k).F:'—','Código da unidade interna.'],
+ ['k','Modelo da condensadora',['F'],k=>CDU(k)?CDU(k).F:'—','Código da unidade externa.'],
+ ['k','Modelo do painel',['F'],k=>k.panel?k.panel.F:'—','Código do painel (cassete).'],
+ ['k','Quantidade de volumes',[],k=>k.units.length,'Quantas caixas formam o produto.'],
+ ['k','Capacidade nominal (BTU/h)',['S'],k=>v(MU(k),'S'),'Capacidade de refrigeração nominal.'],
+ ['k','Capacidade máxima (BTU/h)',['T'],k=>v(MU(k),'T'),'Capacidade máxima do inverter.'],
+ ['k','Capacidade de refrigeração (W)',['V'],k=>v(MU(k),'V'),'Capacidade nominal em watts.'],
+ ['k','Capacidade de aquecimento (BTU/h)',['U'],k=>k.ciclo==='Frio'?'Não possui':v(MU(k),'U'),'Só em modelos quente e frio.'],
+ ['k','Classificação Inmetro',['AO'],k=>v(MU(k),'AO'),'Letra da etiqueta de eficiência.'],
+ ['k','Selo Procel',[],k=>procelOf(k),'Selo Procel de economia de energia. Na Hisense: linha Hi-Efficiency 9.000, 12.000 e 18.000 BTUs, frio e quente e frio.'],
+ ['k','IDRS (Wh/Wh)',['AU'],k=>v(MU(k),'AU'),'Índice de eficiência sazonal. Quanto maior, mais econômico.'],
+ ['k','Consumo de energia (kWh/ano)',['AV'],k=>v(MU(k),'AV'),'Consumo anual da etiqueta Inmetro.'],
+ ['k','Tensão (V)',['AP'],k=>v(MU(k),'AP'),'Tensão de alimentação.'],
+ ['k','Frequência',['AQ'],k=>v(MU(k),'AQ'),'Frequência da rede.'],
+ ['k','Fases',['AR'],k=>v(MU(k),'AR'),'Ligação elétrica.'],
+ ['k','Potência elétrica consumida (W)',['AS'],k=>v(MU(k),'AS'),'Potência na refrigeração.'],
+ ['k','Corrente de refrigeração (A)',['AW'],k=>v(MU(k),'AW'),'Corrente em refrigeração.'],
+ ['k','Corrente nominal (A)',['AY'],k=>v(MU(k),'AY'),'Usada para dimensionar a instalação elétrica.'],
+ ['k','Alimentação elétrica',['AN'],k=>alimx(MU(k)),'Por qual unidade entra a energia.'],
+ ['k','Ligação / plugue',['BB','BD'],k=>v(MU(k),'BD'),'Tipo de plugue ou cabo direto.'],
+ ['k','Gás refrigerante',['K'],k=>v(MU(k),'K'),'Gás do sistema.'],
+ ['k','Compressor',['J'],k=>v(MU(k),'J'),'Inverter ou on/off.'],
+ ['k','Vazão de ar',['AZ'],k=>v(MU(k),'AZ'),'Volume de ar por hora.'],
+ ['k','Área indicada',['BA'],k=>v(MU(k),'BA'),'Área aproximada atendida.'],
+ ['k','Faixa de temperatura',['BU'],k=>v(MU(k),'BU'),'Temperaturas que o controle permite.'],
+ ['k','Velocidades',['BV'],k=>v(MU(k),'BV'),'Velocidades do ventilador.'],
+ ['k','Modos de operação',['CF'],k=>v(MU(k),'CF'),'Modos disponíveis no controle.'],
+ ['k','Filtro',['CA'],k=>v(MU(k),'CA'),'Tipo de filtro.'],
+ ['k','Wi-Fi',['BK'],k=>sn(v(MU(k),'BK')),'Se já vem com Wi-Fi.'],
+ ['k','Aplicativo',['BL'],k=>v(MU(k),'BL'),'App de controle.'],
+ ['k','Comando de voz',['BM','BN'],k=>{const g=sn(v(MU(k),'BM')),a=sn(v(MU(k),'BN'));const l=[g==='Sim'&&'Google Assistente',a==='Sim'&&'Alexa'].filter(Boolean);return l.length?l.join(', '):'Não'},'Assistentes compatíveis.'],
+ ['k','Funções',[],k=>featuresOf([k]).map(f=>f.name).join(', ')||'—','Recursos marcados como Sim na base.'],
+ ['k','Linha de líquido',['CW'],k=>v(MU(k),'CW'),'Diâmetro do tubo de líquido.'],
+ ['k','Linha de gás (sucção)',['CX'],k=>v(MU(k),'CX'),'Diâmetro do tubo de gás.'],
+ ['k','Distância máxima entre unidades (m)',['CZ'],k=>v(MU(k),'CZ'),'Comprimento máximo de tubulação.'],
+ ['k','Desnível máximo (m)',['CY'],k=>v(MU(k),'CY'),'Diferença de altura máxima entre as unidades.'],
+ ['k','Carga de gás de fábrica (kg)',['P'],k=>v(CDU(k)||MU(k),'P'),'Gás que vem na condensadora.'],
+ ['k','Garantia do produto',['CN'],k=>v(MU(k),'CN'),'Garantia legal do produto.'],
+ ['k','Garantia do compressor',['CO'],k=>v(MU(k),'CO'),'Garantia do compressor.'],
+ ['k','Conteúdo da embalagem',['DP'],k=>v(MU(k),'DP'),'O que vem nas caixas.'],
+ ['k','Descrição curta',['NC'],k=>v(tkOf(k).evap,'NC'),'Texto curto para o site do cliente.'],
+ ['k','Descrição longa',['N'],k=>v(tkOf(k).evap,'N'),'Texto completo para o site do cliente.'],
+ ['k','SAC',['DO'],k=>v(MU(k),'DO'),'Atendimento ao consumidor.'],
+ ['u','Unidade',['I'],(u,k)=>roleOf(k,u),'Evaporadora, condensadora, painel ou unidade única.'],
+ ['u','Modelo',['F'],u=>u.F,'Código Hisense da unidade.'],
+ ['u','EAN',['AA'],u=>v(u,'AA'),'Código de barras de 13 dígitos.'],
+ ['u','NCM',['Z'],u=>ncm(v(u,'Z')),'Classificação fiscal.'],
+ ['u','CEST',['Y'],u=>v(u,'Y'),'Código especificador da substituição tributária.'],
+ ['u','Origem',['L'],u=>v(u,'L'),'Origem fiscal (CST).'],
+ ['u','IPI (%)',['AC'],u=>ipiPct(v(u,'AC')),'Alíquota de IPI, em percentual.'],
+ ['u','Registro Inmetro',['AD'],u=>v(u,'AD'),'Número do registro.'],
+ ['u','Homologação Anatel',['BO'],u=>v(u,'BO'),'Para produtos com Wi-Fi.'],
+ ['u','Largura (mm)',['AG'],u=>v(u,'AG'),'Sem embalagem.'],['u','Altura (mm)',['AH'],u=>v(u,'AH'),'Sem embalagem.'],['u','Profundidade (mm)',['AI'],u=>v(u,'AI'),'Sem embalagem.'],
+ ['u','Largura da embalagem (mm)',['AJ'],u=>v(u,'AJ'),'Com embalagem.'],['u','Altura da embalagem (mm)',['AK'],u=>v(u,'AK'),'Com embalagem.'],['u','Profundidade da embalagem (mm)',['AL'],u=>v(u,'AL'),'Com embalagem.'],
+ ['u','Peso líquido (kg)',['AE'],u=>v(u,'AE'),'Sem embalagem.'],['u','Peso bruto (kg)',['AF'],u=>v(u,'AF'),'Com embalagem.'],
+ ['u','Empilhamento máximo',['AM'],u=>v(u,'AM'),'Caixas que podem ser empilhadas.'],
+ ['u','Cor',['BF'],u=>v(u,'BF'),'Cor do gabinete.'],
+ ['u','Ruído (dB(A))',['BG','BH'],(u,k)=>roleOf(k,u)==='Condensadora'?v(u,'BH'):v(u,'BG'),'Nível de ruído da unidade.'],
+];
+const tkOf=k=>isNA(k.evap.N)&&isNA(k.evap.NC)?(famKits(k).find(x=>!isNA(x.evap.N))||k):k;
+const GENERIC=GEN_DEF.map(([lvl,label,cols,fn,explain],i)=>({row:1000+i,label,hint:'',tipo:'base',explain,term:(cols.length&&(CENTRALAR.find(f=>f.cols&&f.cols.length&&f.cols.join()===cols.join())||{}).term)||label,cols,level:lvl,kit:lvl==='k',
+  src:lvl==='k'?(u,k)=>{const x=fn(k);return x===MISSING?MISSING:(x==null?'—':x)}:(u,k)=>{const x=fn(u,k);return x===MISSING?MISSING:(x==null?'—':x)}}));
+async function downloadGeneric(kits){
+  const wb=new ExcelJS.Workbook();wb.creator='Hisense';wb.created=new Date();
+  const TEAL='FF00807B',TEAL_SOFT='FFD8EFED',INK='FF0F2526',MUTED='FF5B6F70',ZEBRA='FFF4F8F8',LINE='FFD6E0E0';
+  const F=(o={})=>({name:'Arial',size:10,color:{argb:INK},...o});
+  const thin={style:'thin',color:{argb:LINE}};const box={top:thin,left:thin,bottom:thin,right:thin};
+  const val=x=>{if(x===MISSING||x==null||x==='N/A')return '';if(typeof x==='string'&&/^\d+([.,]\d+)?$/.test(x.trim())&&x.trim().length<12)return Number(x.replace(',','.'));return x};
+  const byLabel=l=>GENERIC.find(f=>f.label===l);
+  // logo: o enviado na área de administração; sem ele, a marca em texto
+  let logo=null;if(S.logo){try{const d=await loadImg(S.logo.data,600,0.95);if(d)logo={id:wb.addImage({base64:d.data,extension:'jpeg'}),w:d.w,h:d.h}}catch(e){}}
+  const when=new Date().toLocaleDateString('pt-BR');
+  function header(ws,title,ncols){
+    ws.getRow(1).height=44;ws.getRow(2).height=18;ws.getRow(3).height=6;
+    if(logo){const h=34,w=Math.min(170,h*logo.w/logo.h);ws.addImage(logo.id,{tl:{col:0.12,row:0.2},ext:{width:w,height:h},editAs:'oneCell'})}
+    else{const c=ws.getCell(1,1);c.value='Hisense';c.font=F({size:20,bold:true,color:{argb:TEAL}});c.alignment={vertical:'middle'}}
+    const t=ws.getCell(1,3);t.value=title;t.font=F({size:15,bold:true});t.alignment={vertical:'middle'};
+    const sub=ws.getCell(2,3);sub.value=`Gerado em ${when}  ·  ${kits.length} produto${kits.length>1?'s':''}  ·  Base: ${S.baseMeta&&S.baseMeta.name||'base Hisense'}`;sub.font=F({size:9,color:{argb:MUTED}});
+    for(let c=1;c<=ncols;c++)ws.getCell(3,c).border={bottom:{style:'medium',color:{argb:TEAL}}};
+  }
+  function table(ws,sections,rows,opt={}){
+    const cols=sections.flatMap(s=>s.cols);const HR=5,SR=4;let c=1;
+    for(const sec of sections){const a=c,b=c+sec.cols.length-1;if(b>a)ws.mergeCells(SR,a,SR,b);const cell=ws.getCell(SR,a);cell.value=sec.name;
+      for(let x=a;x<=b;x++){const k=ws.getCell(SR,x);k.fill={type:'pattern',pattern:'solid',fgColor:{argb:TEAL_SOFT}};k.border=box}
+      cell.font=F({bold:true,size:9,color:{argb:TEAL}});cell.alignment={vertical:'middle',horizontal:'left',indent:1};c=b+1}
+    ws.getRow(SR).height=18;
+    cols.forEach((col,i)=>{const h=ws.getCell(HR,i+1);h.value=col.label;h.font=F({bold:true,size:9,color:{argb:'FFFFFFFF'}});h.fill={type:'pattern',pattern:'solid',fgColor:{argb:TEAL}};
+      h.alignment={vertical:'middle',horizontal:'center',wrapText:true};h.border=box;ws.getColumn(i+1).width=col.w||14});
+    ws.getRow(HR).height=40;
+    rows.forEach((r,ri)=>{const R=HR+1+ri;const row=ws.getRow(R);
+      cols.forEach((col,i)=>{const cell=row.getCell(i+1);let x=r[i];if(col.text&&x!==''&&x!=null)x=String(x);cell.value=x===''?null:x;
+        cell.font=F(i===0?{bold:true}:{});cell.border=box;cell.alignment={vertical:opt.wrap?'top':'middle',horizontal:col.align||(typeof x==='number'?'center':'left'),wrapText:!!opt.wrap,indent:typeof x==='number'?0:1};
+        if(typeof x==='number'&&col.fmt)cell.numFmt=col.fmt;
+        if((opt.group?opt.group[ri]:ri)%2)cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:ZEBRA}};
+        if(opt.group&&ri>0&&opt.group[ri]!==opt.group[ri-1])cell.border={...box,top:{style:'medium',color:{argb:TEAL}}}});
+      if(opt.wrap){const lines=Math.max(...cols.map((col,i)=>{const t=String(r[i]??'');return Math.ceil(t.length/Math.max(8,(col.w||14)*1.1))+(t.match(/\n/g)||[]).length}));row.height=Math.min(240,Math.max(20,lines*12.5+6))}
+      else row.height=20});
+    if(opt.group&&opt.mergeN){let a=0;for(let ri=1;ri<=rows.length;ri++){if(ri===rows.length||opt.group[ri]!==opt.group[a]){if(ri-1>a)for(let c=1;c<=opt.mergeN;c++){ws.mergeCells(HR+1+a,c,HR+ri,c);const m=ws.getCell(HR+1+a,c);m.alignment={...m.alignment,vertical:'middle',wrapText:true}}a=ri}}}
+    ws.views=[{state:'frozen',ySplit:HR,xSplit:opt.freezeX||1,showGridLines:false}];
+    ws.autoFilter={from:{row:HR,column:1},to:{row:HR+Math.max(rows.length,1),column:cols.length}};
+    ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9,margins:{left:.4,right:.4,top:.5,bottom:.5,header:.2,footer:.2}};
+    ws.pageSetup.printTitlesRow=`${SR}:${HR}`;
+    return HR+rows.length;
+  }
+  const W={'Modelo':20,'Modelo da evaporadora':20,'Família':18,'Tipo de produto':16,'Descrição comercial':46,'Modelo da condensadora':20,'Modelo do painel':16,'Modos de operação':30,'Faixa de temperatura':18,'Alimentação elétrica':18,'Ligação / plugue':18,'Comando de voz':22,'Área indicada':14,'Vazão de ar':18,'Filtro':22,'Garantia do produto':16,'Garantia do compressor':16,'Velocidades':22};
+  const FMT={'Capacidade nominal (BTU/h)':'#,##0','Capacidade máxima (BTU/h)':'#,##0','Capacidade de refrigeração (W)':'#,##0','Capacidade de aquecimento (BTU/h)':'#,##0','Consumo de energia (kWh/ano)':'#,##0','Potência elétrica consumida (W)':'#,##0'};
+  const SEC_K=[
+    ['Identificação',['__modelo','Descrição comercial','Modelo da evaporadora','Família','Tipo de produto','Ciclo','Tipo de conexão','Modelo da condensadora','Modelo do painel','Quantidade de volumes']],
+    ['Capacidade e eficiência',['Capacidade nominal (BTU/h)','Capacidade máxima (BTU/h)','Capacidade de refrigeração (W)','Capacidade de aquecimento (BTU/h)','Classificação Inmetro','Selo Procel','IDRS (Wh/Wh)','Consumo de energia (kWh/ano)']],
+    ['Elétrica',['Tensão (V)','Frequência','Fases','Potência elétrica consumida (W)','Corrente de refrigeração (A)','Corrente nominal (A)','Alimentação elétrica','Ligação / plugue']],
+    ['Desempenho e recursos',['Gás refrigerante','Compressor','Vazão de ar','Área indicada','Faixa de temperatura','Velocidades','Modos de operação','Filtro','Wi-Fi','Aplicativo','Comando de voz']],
+    ['Instalação',['Linha de líquido','Linha de gás (sucção)','Distância máxima entre unidades (m)','Desnível máximo (m)','Carga de gás de fábrica (kg)']],
+    ['Garantia',['Garantia do produto','Garantia do compressor']]];
+  const TEXT_K=['Funções','Conteúdo da embalagem','Descrição curta','Descrição longa','SAC'];
+  const used=new Set(SEC_K.flatMap(x=>x[1]).concat(TEXT_K));
+  const extra=GENERIC.filter(f=>f.level==='k'&&!used.has(f.label)).map(f=>f.label);if(extra.length)SEC_K.push(['Outros',extra]);
+  const MODELO={label:'Modelo',src:(u,k)=>k.evap.F};const mkSecs=defs=>defs.map(([name,labels])=>({name,cols:labels.map(l=>l==='__modelo'?MODELO:byLabel(l)).filter(Boolean).map(f=>({f,label:f.label,w:W[f.label]||(f.label.length>22?16:13),fmt:FMT[f.label]}))})).filter(s=>s.cols.length);
+  // aba 1: produtos — uma linha por unidade (evaporadora, condensadora, painel), agrupadas por produto
+  const PROD=['__modelo','Descrição comercial','Família','Tipo de produto','Ciclo','Tipo de conexão','Quantidade de volumes'];
+  const UNI={label:'Unidade',src:(u,k)=>k.multiRole||roleOf(k,u),unit:true},UMOD={label:'Modelo da unidade',src:u=>u.F,unit:true};
+  const UFl=l=>{const f=GENERIC.find(x=>x.level==='u'&&x.label===l);return f?{...f,unit:true}:null};
+  const SEC_U2=[['Fiscal',['EAN','NCM','CEST','Origem','IPI (%)','Registro Inmetro','Homologação Anatel']],
+    ['Medidas e peso',['Largura (mm)','Altura (mm)','Profundidade (mm)','Peso líquido (kg)','Largura da embalagem (mm)','Altura da embalagem (mm)','Profundidade da embalagem (mm)','Peso bruto (kg)','Empilhamento máximo']],
+    ['Acabamento',['Cor','Ruído (dB(A))']]];
+  const usedU2=new Set(SEC_U2.flatMap(x=>x[1]).concat(['Unidade','Modelo']));const exU2=GENERIC.filter(f=>f.level==='u'&&!usedU2.has(f.label)).map(f=>f.label);if(exU2.length)SEC_U2[2][1].push(...exU2);
+  const techDefs=SEC_K.filter(([n])=>n!=='Identificação');
+  const secP=[
+    {name:'Produto',cols:PROD.map(l=>l==='__modelo'?MODELO:byLabel(l)).filter(Boolean).map(f=>({f,label:f.label,w:W[f.label]||(f.label.length>18?14:12),kit:true}))},
+    {name:'Unidade',cols:[{f:UNI,label:'Unidade',w:15},{f:UMOD,label:'Modelo da unidade',w:20}]},
+    ...SEC_U2.map(([name,labels])=>({name,cols:labels.map(UFl).filter(Boolean).map(f=>({f,label:f.label,w:f.label.length>20?14:12,text:/^(EAN|NCM|CEST)$/.test(f.label)}))})).filter(x=>x.cols.length),
+    ...mkSecs(techDefs)];
+  secP.find(x=>x.name==='Produto').cols.find(c=>c.label==='Descrição comercial').w=40;
+  const KIT_LEVEL=new Set(['Selo Procel','Capacidade de aquecimento (BTU/h)']);
+  const allP=secP.flatMap(x=>x.cols);const pRows=[],grp=[];
+  kits.forEach((k,gi)=>{for(const u of k.units){
+    const uk={...k,evap:u,cond:null,panel:null,multiRole:null};
+    pRows.push(allP.map(c=>{const f=c.f;let x;try{x=c.kit?f.src(k.evap,k):f.unit?f.src(u,k):KIT_LEVEL.has(f.label)?f.src(u,{...k,evap:u}):f.src(u,uk)}catch(e){x=''}x=val(x);
+      if(u.__panel||/^painel/i.test(String(u.I||''))){if(!c.kit&&!f.unit&&(x==='Não possui'||x==='Não'))x=''}return x}));
+    grp.push(gi)}});
+  const p=wb.addWorksheet('Produtos',{properties:{tabColor:{argb:TEAL}}});
+  header(p,'Ficha de produto · Ar-condicionado',allP.length);
+  const lastP=table(p,secP,pRows,{group:grp,mergeN:secP[0].cols.length,freezeX:secP[0].cols.length>1?1:1});
+  addDriveNote(p,lastP+2,kits,12);
+  // aba 3: textos longos (descrições ficam aqui para não esticar as linhas da aba Produtos)
+  const secT=[{name:'Produto',cols:[{label:'Modelo',w:20,f:MODELO},{label:'Descrição comercial',w:34,f:byLabel('Descrição comercial')}]},
+    {name:'Textos para cadastro',cols:TEXT_K.map(l=>byLabel(l)).filter(Boolean).map(f=>({f,label:f.label,w:{'Descrição longa':70,'Descrição curta':40,'Funções':34,'Conteúdo da embalagem':36,'SAC':24}[f.label]||30}))}];
+  const t=wb.addWorksheet('Textos');header(t,'Textos para o site e cadastro',secT.reduce((n,s)=>n+s.cols.length,0));
+  table(t,secT,kits.map(k=>secT.flatMap(s=>s.cols).map(c=>{const x=val(c.f.src(k.evap,k));return typeof x==='string'?x.replace(/\r/g,''):x})),{wrap:true});
+  // aba 4: glossário
+  const g=wb.addWorksheet('Glossário');header(g,'Glossário das colunas',4);
+  const secG=[{name:'Glossário',cols:[{label:'Coluna',w:34},{label:'Aba',w:12},{label:'O que é',w:62},{label:'Onde está na base Hisense',w:46}]}];
+  table(g,secG,GENERIC.map(f=>[f.label,TEXT_K.includes(f.label)?'Textos':'Produtos',f.explain,(f.cols||[]).filter(c=>S.base.headers[c]).map(c=>`${S.base.headers[c]} (col. ${(S.base.srcCols||{})[c]||c})`).join('; ')]),{wrap:true});
+  const out=await wb.xlsx.writeBuffer();
+  await offer(kits.length===1?`Ficha Hisense - ${kits[0].evap.F}.xlsx`:`Ficha Hisense - ${kits.length} produtos.xlsx`,new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+}
+async function downloadPdf(kits){
+  if(!kits.length)return;setBusy(true);
+  try{
+    const {jsPDF}=window.jspdf;
+    const fams=[...new Map(kits.map(k=>[famKeyOf(k),famKits(k)])).values()];
+    const fname=f=>`Ficha tecnica Hisense - ${famTitle(f[0])} ${f[0].ciclo}.pdf`.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    // várias famílias: um PDF por família dentro de um ZIP
+    if(fams.length>1&&window.JSZip){const zip=new JSZip();
+      for(let i=0;i<fams.length;i++){toast(`Gerando ficha ${i+1} de ${fams.length}…`);const d=new jsPDF({unit:'mm',format:'a4'});await drawFamilyFicha(d,fams[i]);footers(d,[[`${famTitle(fams[i][0])} · ${fams[i][0].ciclo}`,1,d.getNumberOfPages()]]);zip.file(fname(fams[i]),d.output('blob'))}
+      const blob=await zip.generateAsync({type:'blob',compression:'STORE'});await offer(`Fichas tecnicas Hisense - ${fams.length} familias.zip`,blob);return}
+    const doc=new jsPDF({unit:'mm',format:'a4'});
+    const ranges=[];
+    for(let i=0;i<fams.length;i++){if(i)doc.addPage('a4','portrait');const start=doc.getNumberOfPages();await drawFamilyFicha(doc,fams[i]);const k0=fams[i][0];ranges.push([`${famTitle(k0)} · ${k0.ciclo}`,start,doc.getNumberOfPages()])}
+    footers(doc,ranges);
+    const name=fname(fams[0]);
+    await offer(name,doc.output('blob'));
+  }catch(e){console.error(e);dlProblem('Erro ao gerar o PDF: '+(e&&e.message||e))}
+  finally{setBusy(false)}
+}
+
+/* ===================== glossário ===================== */
+function renderGloss(){
+  if(!S.base)return;
+  const q=norm($('#gq').value);const H=S.base.headers;const clients=Object.entries(CLIENTS);
+  const byTerm=new Map();
+  for(const[ck,c]of clients)for(const f of c.fields){
+    if(!byTerm.has(f.term))byTerm.set(f.term,{term:f.term,explain:f.explain,cols:new Set(f.cols||[]),tipo:f.tipo,names:{}});
+    const t=byTerm.get(f.term);(f.cols||[]).forEach(x=>t.cols.add(x));(t.names[ck]=t.names[ck]||[]).push({label:f.label,hint:f.hint});
+  }
+  let rows=[...byTerm.values()].map(r=>{const notes=[...r.cols].map(c=>GLOSS_NOTES[c]).filter(Boolean);return notes.length?{...r,explain:[r.explain,...new Set(notes)].filter(Boolean).join(' ')}:r});
+  rows.push(...GLOSS_EXTRA);
+  if($('#gAll').checked){const used=new Set(rows.flatMap(r=>[...r.cols]));
+    for(const[col,h]of Object.entries(H))if(!used.has(col)&&col!=='A')rows.push({term:h,explain:'',cols:new Set([col]),names:{},extra:true})}
+  const hay=r=>norm([r.term,r.explain,...[...r.cols].map(c=>H[c]||''),...Object.values(r.names).flat().map(n=>n.label)].join(' '));
+  if(q)rows=rows.filter(r=>q.split(' ').every(t=>hay(r).includes(t)));
+  $('#gCount').textContent=`${rows.length} termo(s)`;
+  $('#gHead').replaceChildren(el('tr',{},el('th',{},'Termo Hisense'),el('th',{},'Onde está na base'),...clients.map(([,c])=>el('th',{},`Como a ${c.name} chama`)),el('th',{},'O que é')));
+  const tb=$('#gBody');tb.replaceChildren();
+  for(const r of rows){
+    const cols=[...r.cols];
+    tb.append(el('tr',{},
+      el('td',{class:'t'},r.term),
+      el('td',{class:'src'},cols.length?cols.filter(c=>H[c]).map(c=>`${H[c]} (col. ${(S.base.srcCols||{})[c]||c})`).join('\n')||el('span',{class:'none'},'Não existe na base'):el('span',{class:'none'},r.tipo==='cliente'?'Preenchido pelo cliente':'Não existe na base')),
+      ...clients.map(([ck])=>el('td',{class:'cl'},(r.names[ck]||[]).length?r.names[ck].map(n=>n.label).join(' / '):el('span',{class:'none'},'Não pede'))),
+      el('td',{class:'ex'},r.explain||'')));
+  }
+  if(!rows.length)tb.append(el('tr',{},el('td',{colspan:3+clients.length,class:'empty'},'Nenhum termo encontrado.')));
+}
+
+/* ===================== conferência: aba ===================== */
+function renderHealth(){
+  const all=S.kits.flatMap(checkKit);const showE=$('#fErr').checked,showW=$('#fWarn').checked;
+  const rows=all.filter(a=>(a.lvl==='erro'&&showE)||(a.lvl==='atencao'&&showW));
+  $('#healthCount').textContent=`${all.filter(a=>a.lvl==='erro').length} erros · ${all.filter(a=>a.lvl==='atencao').length} pontos de atenção · ${S.kits.length} produtos`;
+  const tb=$('#healthBody');tb.replaceChildren();
+  rows.sort((a,b)=>(a.lvl===b.lvl?0:a.lvl==='erro'?-1:1));
+  for(const a of rows)tb.append(el('tr',{},el('td',{class:'lvl'},el('span',{class:'chip '+(a.lvl==='erro'?'warn':'')},a.lvl==='erro'?'Erro':'Atenção')),
+    el('td',{},el('button',{class:'item',style:'padding:0',onclick:()=>{S.kit=a.kit.id;go('cadastro');renderList();renderWork()}},el('span',{},a.kit.name),el('span',{class:'m'},a.kit.evap.F))),el('td',{},a.msg)));
+  if(!rows.length)tb.append(el('tr',{},el('td',{colspan:3,class:'empty'},'Nada para mostrar.')));
+}
+
+/* ===================== base: carga e upload ===================== */
+// Regras do Produto aplicadas a qualquer base carregada
+const INMETRO_JANELA='Sem classificação por letra (a categoria janela não tem A, B…)';
+const INMETRO_PORTATIL='Não possui (portátil não tem etiqueta Inmetro)';
+function applyProductRules(r){
+  const g=groupOf(r);
+  if(g==='Janela')r.AO=INMETRO_JANELA;
+  if(r.F==='AW-07CMBRUGU00'){Object.assign(r,{DJ:'Não',CD:'Não',CS:'Não',CR:'Não',CH:'Não',BX:'Não',BY:'-',BZ:'-',BS:'Não',BR:'Não',CF:'Refrigerar / Ventilar',BV:'2 velocidades: Baixa e Alta'})}
+  if(g==='Portátil'){r.AO=INMETRO_PORTATIL;r.AU='Não possui (portátil não tem classificação)'}
+  if(/^painel/i.test(String(r.I||'').trim()))r.E='Painel do Cassete';
+}
+const GLOSS_NOTES={AO:'Regra do Produto: janela não tem classificação por letra no Inmetro (a eficiência é informada pelo IDRS; na Janela Inverter Expert o IDRS é 4). Portátil não tem etiqueta Inmetro nem classificação.',
+  AU:'Regra do Produto: na janela a eficiência é informada pelo IDRS (Janela Inverter Expert: 4). Portátil não tem IDRS nem classificação Inmetro.'};
+const GLOSS_EXTRA=[{term:'Freematch',explain:'Tipo de conexão do Multi Split. A linha se chama Hi-Multi; Freematch é a forma de ligar as evaporadoras à condensadora (de 2 a 5 evaporadoras).',cols:new Set(),names:{}},
+  {term:'Hi-Multi',explain:'Nome da linha Multi Split Hisense. Use Hi-Multi como nome da linha e Freematch como tipo de conexão.',cols:new Set(['O']),names:{}}];
+function applyBase(base,meta){
+  S.base=base;Object.assign(S.baseMeta,meta||{});
+  base.rows.forEach(r=>{r.F=trimModel(r.F);if(String(r.I||'').toUpperCase()==='PAINEL')r.__panel=true;applyProductRules(r)});
+  const {kits,by,orphans}=buildKits(base.rows);S.kits=kits;S.byModel=by;S.orphans=orphans;
+  if(!S.kits.find(k=>k.id===S.kit))S.kit=(S.kits.find(k=>k.id==='AUC-36TR4RKKAE')||S.kits[0]||{}).id;
+  const at=S.baseMeta.at?` · atualizada em ${new Date(S.baseMeta.at).toLocaleDateString('pt-BR')}`:'';
+  $('#baseInfo').textContent=`Base: ${S.baseMeta.name}${at} · ${base.rows.length} modelos · ${kits.length} produtos em linha`;
+  const o=$('#orphans');o.replaceChildren(...(orphans.length?orphans.map(m=>el('span',{},m)):[el('span',{style:'font-family:var(--f-body);color:var(--muted)'},'Nenhuma.')]));
+  for(const id of [...S.sel])if(!S.kits.find(k=>k.id===id))S.sel.delete(id);
+  renderList();renderWork();renderHealth();renderGloss();renderMissingPhotos();renderFamStatus();
+  const k=S.kits.find(x=>x.id===S.kit);if(k)($('#photoTarget')||{}).textContent=k.name;
+}
+const norm=s=>String(s??'').replace(/\s+/g,' ').trim().toLowerCase();
+function cellVal(v){if(v==null)return null;if(typeof v==='object'){if(v.richText)return v.richText.map(t=>t.text).join('');if('result'in v)return v.result??null;if(v.text)return v.text;if(v instanceof Date)return v.toLocaleDateString('pt-BR');if(v.error)return null}return v}
+async function slimXlsx(buf){
+  // remove validações de dados (listas suspensas) que travam a leitura em planilhas grandes
+  if(!window.JSZip)return buf;const zip=await JSZip.loadAsync(buf);
+  for(const name of Object.keys(zip.files).filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n))){
+    let t=await zip.file(name).async('text');const t2=t.replace(/<dataValidations[\s\S]*?<\/dataValidations>/g,'').replace(/<x14:dataValidations[\s\S]*?<\/x14:dataValidations>/g,'');
+    if(t2!==t)zip.file(name,t2)}
+  return await zip.generateAsync({type:'uint8array'});
+}
+async function parseBaseXlsx(buf){
+  const wb=new ExcelJS.Workbook();await wb.xlsx.load(await slimXlsx(buf));
+  const canon={};for(const[col,h]of Object.entries(S.base.headers))canon[norm(h)]=col;
+  for(const[h,col]of Object.entries(S.base.aliases||{}))if(!canon[norm(h)])canon[norm(h)]=col;
+  for(const ws of wb.worksheets){
+    let hdrRow=null;ws.eachRow((row,i)=>{if(!hdrRow&&norm(cellVal(row.getCell(1).value))==='pt')hdrRow=i});
+    if(!hdrRow)continue;
+    const map={};ws.getRow(hdrRow).eachCell((cell,ci)=>{const h=norm(cellVal(cell.value));if(canon[h])map[ci]=canon[h]});
+    if(!Object.values(map).includes('F'))continue;
+    const rows=[];
+    for(let r=hdrRow+1;r<=ws.rowCount;r++){const row=ws.getRow(r);const d={};
+      for(const[ci,col]of Object.entries(map)){let x=cellVal(row.getCell(Number(ci)).value);if(typeof x==='string')x=x.trim();if(x==null||x===''||x==='#VALUE!')continue;d[col]=x}
+      if(d.F&&!/^\d+$/.test(String(d.F).trim())&&!['modelo','model'].includes(norm(d.F)))rows.push(d)}
+    const imgCol=Object.entries(map).find(([,c])=>c==='B');
+    const rowModel={};for(let r=hdrRow+1;r<=ws.rowCount;r++){const fc=Object.entries(map).find(([,c])=>c==='F');if(!fc)break;const m=cellVal(ws.getRow(r).getCell(Number(fc[0])).value);if(m)rowModel[r]=trimModel(m)}
+    let images={};try{if(imgCol)images=await extractCellImages(buf,ws.name,Number(imgCol[0]),rowModel)}catch(e){console.warn('imagens',e)}
+    const headers={},srcCols={};ws.getRow(hdrRow).eachCell((cell,ci)=>{const c=map[ci];if(c){headers[c]=String(cellVal(cell.value)).replace(/\s+/g,' ').trim();srcCols[c]=colLetter(ci)}});
+    return {headers,srcCols,aliases:S.base.aliases,rows,matched:Object.keys(map).length,images};
+  }
+  throw new Error('Não encontrei a linha de cabeçalho em português (coluna A = "PT") com a coluna Modelo.');
+}
+// Fotos coladas dentro das células (Excel "Colocar na célula"): lê richData do arquivo
+function colLetter(n){let s='';while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s}
+async function extractCellImages(buf,sheetName,colNum,rowModel){
+  if(!window.JSZip)return {};
+  const zip=await JSZip.loadAsync(buf);const P=new DOMParser();const x=async p=>{const f=zip.file(p);return f?P.parseFromString(await f.async('text'),'application/xml'):null};
+  const RNS='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+  const wbx=await x('xl/workbook.xml'),wbr=await x('xl/_rels/workbook.xml.rels');if(!wbx||!wbr)return {};
+  const sh=[...wbx.getElementsByTagName('sheet')].find(e=>e.getAttribute('name')===sheetName);if(!sh)return {};
+  const rid=sh.getAttributeNS(RNS,'id')||sh.getAttribute('r:id');const tgt=[...wbr.getElementsByTagName('Relationship')].find(e=>e.getAttribute('Id')===rid).getAttribute('Target');
+  const sheetPath='xl/'+tgt.replace(/^\/?xl\//,'');const sheetXml=await (zip.file(sheetPath)).async('text');
+  const meta=await x('xl/metadata.xml'),rv=await x('xl/richData/rdrichvalue.xml'),rvr=await x('xl/richData/richValueRel.xml'),rels=await x('xl/richData/_rels/richValueRel.xml.rels');
+  if(!meta||!rv||!rvr||!rels)return {};
+  const fut=[...meta.getElementsByTagName('futureMetadata')].flatMap(f=>[...f.getElementsByTagName('bk')].map(b=>{const r=b.getElementsByTagNameNS('*','rvb')[0];return r?Number(r.getAttribute('i')):null}));
+  const vm=[...(meta.getElementsByTagName('valueMetadata')[0]||{children:[]}).children].map(b=>Number(b.getElementsByTagName('rc')[0].getAttribute('v')));
+  const rvs=[...rv.documentElement.children].map(r=>[...r.children].map(v=>v.textContent));
+  const rids=[...rvr.documentElement.children].map(r=>r.getAttributeNS(RNS,'id')||r.getAttribute('r:id'));
+  const tg={};[...rels.getElementsByTagName('Relationship')].forEach(r=>tg[r.getAttribute('Id')]=r.getAttribute('Target'));
+  const L=colLetter(colNum);const re=new RegExp('<c r="'+L+'(\\d+)"[^>]*?vm="(\\d+)"','g');const out={};let m;
+  while((m=re.exec(sheetXml))){const row=Number(m[1]),v=Number(m[2]);const model=rowModel[row];if(!model)continue;
+    try{const rvi=fut[vm[v-1]];const rel=Number(rvs[rvi][0]);const path='xl/'+tg[rids[rel]].replace(/^\.\.\//,'');out[model]=path}catch(e){}}
+  // comprime e publica cada imagem uma vez
+  const done={},photos={};
+  for(const[model,path]of Object.entries(out)){
+    if(!done[path]){const blob=await zip.file(path).async('blob');const url=URL.createObjectURL(blob);const im=await loadImg(url);URL.revokeObjectURL(url);if(!im){done[path]=null;continue}
+      const jb=await (await fetch(im.data)).blob();
+      if(S.cap.assets){try{const up=await S.cap.assets.upload(jb);done[path]=up.url}catch(e){done[path]=im.data}}else done[path]=im.data}
+    if(done[path])photos[model]=done[path];
+  }
+  return photos;
+}
+async function fileToImg(file){const data=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(file)});return {data,fmt:/png/i.test(file.type)?'PNG':'JPEG'}}
+
+async function initCaps(){
+  if(!window.claude||!window.claude.use){
+    S.static=true;
+    $('#adminNote').textContent='Site publicado fora do Claude: o que você sobe aqui vale só nesta tela e gera um arquivo para publicar no GitHub (veja as instruções em cada quadro).';
+    try{const r=await fetch('logo.png',{cache:'no-store'});if(r.ok){const b=await r.blob();if(b.size&&/image/.test(b.type)){const data=await new Promise(res=>{const f=new FileReader();f.onload=()=>res(f.result);f.readAsDataURL(b)});S.logo={data,fmt:'PNG'}}}}catch(e){}
+    return}
+  const [dl,db,assets,user]=await Promise.all(['downloads','db','assets','user'].map(n=>window.claude.use(n).catch(()=>null)));
+  S.cap={downloads:dl,db,assets,user};
+  const canEdit=user?await user.canEdit().catch(()=>false):false;S.canEdit=!!canEdit;
+  if(!canEdit){$('#tab-admin').hidden=true}
+  if(!assets||!db)$('#adminNote').textContent='Só quem edita o app consegue subir base, logo e fotos.';
+  if(db){
+    try{
+      const cfg=await db.doc('config/base').get();
+      if(cfg.exists){const d=cfg.data();try{const j=await (await fetch(String(d.url||('/_blob/'+d.assetId)))).json();applyBase(j,{name:d.fileName,at:d.at,source:'upload'})}catch(e){toast('Não consegui abrir a base enviada. Usando a base publicada.')}}
+      const lg=await db.doc('config/logo').get();
+      if(lg.exists){const d=lg.data();S.logo={data:await toDataURL(String(d.url||('/_blob/'+d.assetId))),fmt:d.fmt||'PNG'}}
+      const ks=await db.collection('ksp').get();
+      for(const d0 of ks.docs){const d=d0.data();if(d&&d.kit&&Array.isArray(d.items))S.ksp[d.kit]=d.items.filter(x=>x&&typeof x.t==='string').map(x=>({t:String(x.t),d:String(x.d||'')}))}
+      const up=await db.collection('unitphotos').get();
+      for(const d0 of up.docs){const d=d0.data();if(d&&d.key&&typeof d.url==='string')S.unitPhotos[d.key]=d.url}
+      renderMissingPhotos();
+      const fi=await db.collection('fichaimgs').get();
+      for(const d0 of fi.docs){const d=d0.data();if(d&&d.key&&typeof d.url==='string')(d.kind==='head'?S.heads:S.heroes)[d.key]=d.url}
+      renderFamStatus();
+      const ph=await db.collection('photos').get();
+      for(const p of ph.docs){const d=p.data();if(d&&d.kit){toDataURL(String(d.url||('/_blob/'+d.assetId))).then(x=>{S.photos[d.kit]={data:x,fmt:d.fmt||'JPEG'};if(S.kit===d.kit)renderWork()}).catch(()=>{})}}
+    }catch(e){console.warn(e)}
+    renderWork();
+  }
+}
+function wireAdmin(){
+  $('#upBase').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;const msg=$('#upBaseMsg');msg.textContent='Lendo a planilha…';
+    try{const j=await parseBaseXlsx(await f.arrayBuffer());
+      msg.textContent=`${j.rows.length} modelos lidos (${j.matched} colunas reconhecidas).`;
+      const {assets,db}=S.cap;
+      const nPh=Object.keys(j.images||{}).length;const photos=nPh?j.images:(S.base.photos||{});
+      msg.textContent+=nPh?` ${nPh} fotos encontradas na coluna Imagem.`:' Nenhuma foto nova encontrada; mantive as fotos atuais.';
+      if(assets&&db){const up=await assets.upload(new Blob([JSON.stringify({headers:j.headers,srcCols:j.srcCols,aliases:j.aliases,rows:j.rows,photos})],{type:'application/json'}),{type:'application/json'});
+        const at=new Date().toISOString();await db.doc('config/base').set({assetId:up.id,url:up.url,fileName:f.name,at,rows:j.rows.length});
+        msg.textContent+=' Base publicada para todos.';}
+      else if(S.static){const blob=new Blob([JSON.stringify({headers:j.headers,srcCols:j.srcCols,aliases:j.aliases,rows:j.rows,photos})],{type:'application/json'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='base.json';document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},3000);
+        msg.textContent+=' Aplicada nesta tela e baixei o arquivo base.json. Para todos verem, suba esse arquivo no repositório do GitHub substituindo o base.json atual (Add file → Upload files).';}
+      else msg.textContent+=' Aplicada só nesta tela (upload compartilhado indisponível aqui).';
+      applyBase({headers:j.headers,srcCols:j.srcCols,aliases:j.aliases,rows:j.rows,photos},{name:f.name,at:new Date().toISOString()});
+    }catch(err){console.error(err);msg.textContent='Não foi possível usar esta planilha: '+(err.message||err.code)}});
+  $('#upLogo').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;const msg=$('#upLogoMsg');
+    try{S.logo=await fileToImg(f);const {assets,db}=S.cap;if(assets&&db){const up=await assets.upload(f);await db.doc('config/logo').set({assetId:up.id,url:up.url,fmt:S.logo.fmt});msg.textContent='Logo salvo para todos.'}else if(S.static){msg.textContent='Logo aplicado nesta tela. Para todos verem, suba a imagem no repositório do GitHub com o nome logo.png.'}else msg.textContent='Logo aplicado só nesta tela.'}
+    catch(err){msg.textContent='Não foi possível salvar o logo: '+(err.message||err.code)}});
+  $('#upHeads').addEventListener('change',e=>{const f=[...e.target.files];if(f.length)uploadFamImgs(f,'head')});
+  $('#upHeroes').addEventListener('change',e=>{const f=[...e.target.files];if(f.length)uploadFamImgs(f,'hero')});
+  $('#upPhotos').addEventListener('change',async e=>{const files=[...e.target.files];if(!files.length)return;const msg=$('#upPhotosMsg');
+    const models=new Map(S.base.rows.map(r=>[pkey(r.F),r.F]));const lines=new Map();S.base.rows.forEach(r=>{const l=lineOf(r);if(l)for(const role of['','EVAPORADORA','CONDENSADORA','PAINEL'])lines.set(pkey(l)+role,`${l}${role?' · '+role.toLowerCase():''}`)});
+    const ok=[],bad=[];msg.textContent=`Enviando ${files.length} foto(s)…`;
+    for(const f of files){const key=pkey(f.name.replace(/\.[^.]+$/,''));const label=models.get(key)||lines.get(key);if(!label){bad.push(f.name);continue}
+      try{const url=URL.createObjectURL(f);const im=await loadImg(url);URL.revokeObjectURL(url);if(!im){bad.push(f.name);continue}
+        let src=im.data;const {assets,db}=S.cap;
+        if(assets&&db){const jb=await (await fetch(im.data)).blob();const up=await assets.upload(jb);src=up.url;await db.doc('unitphotos/'+key).set({key,url:up.url,label})}
+        S.unitPhotos[key]=src;ok.push(label)}catch(err){bad.push(f.name+' ('+(err.message||err.code)+')')}}
+    msg.textContent=`${ok.length} foto(s) aplicada(s)${S.cap.db?' para todos':' só nesta tela'}.`+(bad.length?` Sem correspondência: ${bad.join(', ')}.`:'');
+    renderWork();renderMissingPhotos()});
+  if(false)$('#upPhoto').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;const msg=$('#upPhotoMsg');const k=S.kits.find(x=>x.id===S.kit);if(!k){msg.textContent='Selecione um produto antes.';return}
+    try{S.photos[k.id]=await fileToImg(f);const {assets,db}=S.cap;if(assets&&db){const up=await assets.upload(f);await db.doc('photos/'+safeId(k.id)).set({kit:k.id,assetId:up.id,url:up.url,fmt:S.photos[k.id].fmt});msg.textContent=`Foto salva para ${k.name}.`}else msg.textContent='Foto aplicada só nesta tela.'}
+    catch(err){msg.textContent='Não foi possível salvar a foto: '+(err.message||err.code)}});
+}
+
+/* ===================== navegação ===================== */
+function go(view){for(const b of document.querySelectorAll('nav.tabs button')){const on=b.dataset.view===view;b.setAttribute('aria-selected',String(on));$('#view-'+b.dataset.view).hidden=!on}if(view==='admin'&&S.canEdit)loadLog()}
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='logReload')loadLog()});
+document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.view);try{location.hash=b.dataset.view}catch(e){}}));
+$('#q').addEventListener('input',renderList);$('#gq').addEventListener('input',renderGloss);$('#gAll').addEventListener('change',renderGloss);
+$('#clearSel').addEventListener('click',()=>{S.sel.clear();saveSel();renderList();renderWork()});$('#fErr').addEventListener('change',renderHealth);$('#fWarn').addEventListener('change',renderHealth);
+
+(async()=>{
+  try{S.manual=JSON.parse(localStorage.getItem('manual')||'{}')||{}}catch(e){S.manual={}}
+  S.sel=new Set();try{localStorage.removeItem('sel')}catch(e){}
+  renderClients();wireAdmin();
+  const h=location.hash.replace('#','');if(['glossario','conferencia','admin'].includes(h))go(h);
+  try{S.hier=await (await fetch('hierarquia.json')).json()}catch(e){S.hier={}}
+  try{const j=await (await fetch('base.json')).json();applyBase(j)}catch(e){$('#baseInfo').textContent='Não foi possível carregar a base.'}
+  initCaps();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+{
+"Eco Plus|": [
+{
+"p": "1",
+"t": "Tecnologia Inverter",
+"msg": "Mais conforto com economia"
+},
+{
+"p": "2",
+"t": "19 dB no Modo Dormir",
+"msg": "Silêncio para suas noites"
+},
+{
+"p": "3",
+"t": "Modo Super",
+"msg": "Temperatura ideal em menos tempo"
+},
+{
+"p": "4",
+"t": "Proteção contra insetos e corrosão",
+"msg": "Mais durabilidade para o seu aparelho"
+},
+{
+"p": "5",
+"t": "10 anos de garantia no compressor",
+"msg": "Mais confiança e tranquilidade"
+}
+],
+"Hi-Efficiency|Frio": [
+{
+"p": "1",
+"t": "Wi-Fi + ConnectLife",
+"msg": "Controle seu ar de qualquer lugar"
+},
+{
+"p": "2",
+"t": "3D Inverter + Classe A + ECO Mode",
+"msg": "Mais conforto com economia"
+},
+{
+"p": "3",
+"t": "HI-NANO",
+"msg": "Tecnologia para um ar mais puro"
+},
+{
+"p": "4",
+"t": "19 dB",
+"msg": "Silêncio para suas noites"
+},
+{
+"p": "5",
+"t": "Alexa e Google Assistente",
+"msg": "Sua casa ainda mais inteligente"
+},
+{
+"p": "6",
+"t": "Dupla Limpeza",
+"msg": "Menos preocupação com a manutenção"
+},
+{
+"p": "7",
+"t": "10 anos de garantia no compressor",
+"msg": "Mais confiança e tranquilidade"
+}
+],
+"Hi-Efficiency|Quente e Frio": [
+{
+"p": "1",
+"t": "Quente e frio",
+"msg": "Conforto o ano inteiro"
+},
+{
+"p": "2",
+"t": "Wi-Fi + ConnectLife",
+"msg": "Controle seu ar de qualquer lugar"
+},
+{
+"p": "3",
+"t": "3D Inverter + Classe A + ECO Mode",
+"msg": "Mais conforto com economia"
+},
+{
+"p": "4",
+"t": "HI-NANO",
+"msg": "Tecnologia para um ar mais puro"
+},
+{
+"p": "5",
+"t": "19 dB",
+"msg": "Silêncio para suas noites"
+},
+{
+"p": "6",
+"t": "Alexa e Google Assistente",
+"msg": "Sua casa ainda mais inteligente"
+},
+{
+"p": "7",
+"t": "Dupla Limpeza",
+"msg": "Menos preocupação com a manutenção"
+},
+{
+"p": "8",
+"t": "10 anos de garantia no compressor",
+"msg": "Mais confiança e tranquilidade"
+}
+],
+"Eco Plus II|": [
+{
+"p": "1",
+"t": "IDRS 7,0",
+"msg": "Alta eficiência energética"
+},
+{
+"p": "2",
+"t": "ECO Mode",
+"msg": "Eficiência inteligente em cada uso"
+},
+{
+"p": "3",
+"t": "Modo Super",
+"msg": "Resfriamento rápido para seu conforto"
+},
+{
+"p": "4",
+"t": "19 dB no Modo Dormir",
+"msg": "Silêncio para seus momentos de descanso"
+},
+{
+"p": "5",
+"t": "Filtragem em quatro camadas",
+"msg": "Quatro camadas de proteção para o ar"
+},
+{
+"p": "6",
+"t": "Autolimpeza da evaporadora",
+"msg": "Mais cuidado e praticidade na manutenção"
+},
+{
+"p": "7",
+"t": "10 anos de garantia no compressor",
+"msg": "Confiança e durabilidade"
+}
+],
+"Hi-Multi|": [
+{
+"p": "1",
+"t": "Uma condensadora para até 5 ambientes",
+"msg": "Mais espaço e menos equipamentos na fachada"
+},
+{
+"p": "2",
+"t": "Wi-Fi + ConnectLife + Alexa e Google",
+"msg": "Controle cada ambiente de qualquer lugar"
+},
+{
+"p": "3",
+"t": "Full Inverter",
+"msg": "Mais conforto com economia"
+},
+{
+"p": "4",
+"t": "Quente e frio",
+"msg": "Conforto o ano inteiro"
+},
+{
+"p": "5",
+"t": "19 dB no Modo Dormir",
+"msg": "Silêncio para suas noites"
+}
+]
+}
